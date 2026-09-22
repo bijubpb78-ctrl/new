@@ -22,6 +22,7 @@ interface CartDrawerProps {
   onRemoveItem: (productId: string) => void;
   onProceedToCheckout: () => void;
   checkoutReady: boolean;
+  checkoutTestMode: boolean;
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -33,6 +34,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onRemoveItem,
   onProceedToCheckout,
   checkoutReady,
+  checkoutTestMode,
 }) => {
   if (!isOpen) return null;
 
@@ -200,14 +202,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               id="cart-proceed-checkout-btn"
               className="w-full py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg active:scale-98 cursor-pointer"
             >
-              <span>{checkoutReady ? 'Proceed to Stripe Checkout' : 'Checkout coming soon'}</span>
+              <span>{checkoutReady ? (checkoutTestMode ? 'Try Stripe Test Checkout' : 'Proceed to Stripe Checkout') : 'Checkout coming soon'}</span>
               <ArrowRight className="w-4 h-4 text-stone-950" />
             </button>
 
             {/* Sourcing note */}
             <div className="text-[10px] text-stone-500 text-center flex items-center justify-center gap-1.5 pt-0.5">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{checkoutReady ? 'Secure checkout hosted by Stripe' : 'Payments are not available yet'}</span>
+              <span>{checkoutReady ? (checkoutTestMode ? 'Test mode: no real money will be taken' : 'Secure checkout hosted by Stripe') : 'Payments are not available yet'}</span>
             </div>
           </div>
         )}

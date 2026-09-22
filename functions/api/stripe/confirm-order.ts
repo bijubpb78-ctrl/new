@@ -21,7 +21,7 @@ export async function onRequestPost({ request, env }: Context): Promise<Response
     if (!response.ok) return json({ success: false, error: 'Unable to verify payment.' }, 502);
     const session = await response.json() as { payment_status?: string; client_reference_id?: string };
     if (session.payment_status !== 'paid') return json({ success: false, error: 'Payment has not been completed.' }, 409);
-    return json({ success: true, order: { orderId: session.client_reference_id } });
+    return json({ success: true, mode: sessionId.startsWith('cs_test_') ? 'test' : 'live', order: { orderId: session.client_reference_id } });
   } catch {
     return json({ success: false, error: 'Unable to verify payment.' }, 502);
   }

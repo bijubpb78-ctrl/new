@@ -86,11 +86,12 @@ export default function App() {
   const [stripeCheckoutUrl, setStripeCheckoutUrl] = useState<string | null>(null);
   const [stripeCheckoutLoading, setStripeCheckoutLoading] = useState(false);
   const [checkoutReady, setCheckoutReady] = useState(false);
+  const [checkoutTestMode, setCheckoutTestMode] = useState(false);
 
   useEffect(() => {
     fetch('/api/stripe/status')
       .then((res) => res.ok ? res.json() : { ready: false })
-      .then((data) => setCheckoutReady(data.ready === true))
+      .then((data) => { setCheckoutReady(data.ready === true); setCheckoutTestMode(data.mode === 'test'); })
       .catch(() => setCheckoutReady(false));
   }, []);
   const [checkoutItems, setCheckoutItems] = useState<CartItem[]>([]);
@@ -131,7 +132,9 @@ export default function App() {
             setCartItems([]);
             localStorage.removeItem('fetecart_cart');
             setToastMessage(
-              `Stripe payment verified. Order ${data.order.orderId} is confirmed.`
+              data.mode === 'test'
+                ? `Test payment completed. No money was charged. Order ${data.order.orderId}.`
+                : `Stripe payment verified. Order ${data.order.orderId} is confirmed.`
             );
             if (data.order.trackingNumber) {
               setInitialTrackingCode(data.order.trackingNumber);
@@ -836,6 +839,7 @@ export default function App() {
         onRemoveItem={handleRemoveItem}
         onProceedToCheckout={() => handleProceedToStripe()}
         checkoutReady={checkoutReady}
+        checkoutTestMode={checkoutTestMode}
       />
 
       {/* Stripe Hosted Checkout Modal */}
