@@ -39,28 +39,14 @@ export function setStripePublishableKey(newKey: string): void {
   }
 }
 
-/**
- * Retrieves the currently configured Stripe Secret Key for fetecart.com
- */
+/** Secret keys are configured only in the hosting platform, never in a browser. */
 export function getStripeSecretKey(): string {
-  if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem(SECRET_STORAGE_KEY);
-    if (saved && saved.trim()) return saved.trim();
-  }
-  return DEFAULT_STRIPE_SECRET_KEY;
+  if (typeof window !== 'undefined') localStorage.removeItem(SECRET_STORAGE_KEY);
+  return '';
 }
 
-/**
- * Updates and persists the Stripe Secret Key
- */
-export function setStripeSecretKey(newKey: string): void {
-  if (typeof window === 'undefined') return;
-  const clean = newKey.trim();
-  if (!clean || clean === DEFAULT_STRIPE_SECRET_KEY) {
-    localStorage.removeItem(SECRET_STORAGE_KEY);
-  } else {
-    localStorage.setItem(SECRET_STORAGE_KEY, clean);
-  }
+export function setStripeSecretKey(_newKey: string): void {
+  if (typeof window !== 'undefined') localStorage.removeItem(SECRET_STORAGE_KEY);
 }
 
 /**

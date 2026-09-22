@@ -564,12 +564,7 @@ export const AdminPortalModal: React.FC<AdminPortalModalProps> = ({
       return;
     }
     if (isStripeSecretKey(rawKey)) {
-      // User entered a secret key in this field - automatically save to Secret Key!
-      setStripeSecretKey(rawKey);
-      setStripeSecretKeyInput(rawKey);
-      setStripePublishableKey(DEFAULT_STRIPE_PUBLISHABLE_KEY);
-      setStripeKeyInput(DEFAULT_STRIPE_PUBLISHABLE_KEY);
-      showToast('Stripe Secret Key (sk_live_...) updated! Paired live publishable key for checkout.');
+      showToast('Secret keys must be added in Cloudflare Pages, not here.');
       return;
     }
     setStripePublishableKey(rawKey);
@@ -1844,7 +1839,7 @@ export const AdminPortalModal: React.FC<AdminPortalModalProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] px-2 py-0.5 rounded border font-mono flex items-center gap-1 text-emerald-400 bg-emerald-950/80 border-emerald-800/50">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>Account: {extractStripeAccountId(stripeSecretKeyInput || getStripeSecretKey())}</span>
+                        <span>Configure in Cloudflare</span>
                       </span>
                       <span className={`text-[10px] px-2 py-0.5 rounded border font-mono flex items-center gap-1 ${
                         isStripeLiveMode(stripeKeyInput || getStripePublishableKey())
@@ -1857,78 +1852,12 @@ export const AdminPortalModal: React.FC<AdminPortalModalProps> = ({
                   </div>
 
                   <p className="text-xs text-stone-300 leading-relaxed">
-                    Fetecart checkout is connected directly to your Stripe merchant account (<strong className="text-amber-400">acct_1UGga1DH2aCzSlUF</strong>). Multi-currency transactions (<strong className="text-amber-400">USD, GBP, EUR, AUD</strong>), automated CJ logistics weight calculations, and PCI-DSS TLS encryption are active.
+                    Stripe checkout becomes available after the secret key is configured in Cloudflare Pages. Payment status and orders should be checked in your Stripe Dashboard.
                   </p>
 
-                  {/* 1. Stripe Secret Key Form */}
-                  <form onSubmit={handleSaveStripeSecretKey} className="space-y-2 p-3 bg-[#121211] rounded-xl border border-stone-800">
-                    <div className="flex items-center justify-between flex-wrap gap-1">
-                      <label className="text-xs font-semibold text-stone-200 flex items-center gap-1.5">
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Stripe Secret Key (sk_live_...)</span>
-                        <span className="text-[10px] font-normal text-stone-400 bg-stone-900 px-1.5 py-0.2 rounded border border-stone-800">
-                          Server & Dashboard Auth
-                        </span>
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setShowSecretKey(!showSecretKey)}
-                          className="text-[11px] text-stone-400 hover:text-stone-200 flex items-center gap-1 cursor-pointer"
-                        >
-                          {showSecretKey ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                          <span>{showSecretKey ? 'Hide' : 'Reveal'}</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleCopyStripeSecretKey}
-                          className="text-[11px] text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
-                        >
-                          <Copy className="w-3 h-3" />
-                          <span>{copiedStripeSecretKey ? 'Copied!' : 'Copy'}</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleResetStripeSecretKey}
-                          className="text-[11px] text-stone-500 hover:text-stone-300 cursor-pointer underline"
-                          title="Restore to default live secret key"
-                        >
-                          Reset
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <div className="relative flex-1">
-                        <input
-                          type={showSecretKey ? "text" : "password"}
-                          value={stripeSecretKeyInput}
-                          onChange={(e) => setStripeSecretKeyInput(e.target.value)}
-                          placeholder="sk_live_..."
-                          className="w-full px-3 py-2 bg-[#0c0c0b] border border-stone-700 rounded-lg text-white font-mono text-xs focus:ring-1 focus:ring-emerald-500 focus:outline-none"
-                        />
-                      </div>
-                      <button
-                        type="submit"
-                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs transition-colors cursor-pointer whitespace-nowrap"
-                      >
-                        Update Secret Key
-                      </button>
-                    </div>
-
-                    <div className="text-[11px] text-stone-400 flex items-center justify-between pt-0.5">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-stone-500">Configured:</span>
-                        <code className="text-emerald-400 font-mono text-[10.5px]">
-                          {maskStripeSecretKey(stripeSecretKeyInput || getStripeSecretKey())}
-                        </code>
-                      </div>
-                      <span className="text-[10px] text-emerald-400 flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" />
-                        <span>Authorized for fetecart.com</span>
-                      </span>
-                    </div>
-                  </form>
+                  <p className="text-xs text-amber-300 leading-relaxed rounded-xl border border-amber-800/50 bg-amber-950/20 p-3">
+                    Stripe secret keys must be added as encrypted secrets in Cloudflare Pages, under Settings → Variables and Secrets. Never enter a secret key in this website or store it in the browser.
+                  </p>
 
                   {/* 2. Active Stripe Publishable Key Form */}
                   <form onSubmit={handleSaveStripeKey} className="space-y-2 p-3 bg-[#121211] rounded-xl border border-stone-800">

@@ -85,6 +85,14 @@ export default function App() {
   const [isRedirectingToStripe, setIsRedirectingToStripe] = useState(false);
   const [stripeCheckoutUrl, setStripeCheckoutUrl] = useState<string | null>(null);
   const [stripeCheckoutLoading, setStripeCheckoutLoading] = useState(false);
+  const [checkoutReady, setCheckoutReady] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/stripe/status')
+      .then((res) => res.ok ? res.json() : { ready: false })
+      .then((data) => setCheckoutReady(data.ready === true))
+      .catch(() => setCheckoutReady(false));
+  }, []);
   const [checkoutItems, setCheckoutItems] = useState<CartItem[]>([]);
   const [trackingModalOpen, setTrackingModalOpen] = useState(false);
   const [initialTrackingCode, setInitialTrackingCode] = useState('FTC89421034US');
@@ -123,7 +131,7 @@ export default function App() {
             setCartItems([]);
             localStorage.removeItem('fetecart_cart');
             setToastMessage(
-              `Stripe payment verified! Funds deducted. Order ${data.order.orderId} is confirmed.`
+              `Stripe payment verified. Order ${data.order.orderId} is confirmed.`
             );
             if (data.order.trackingNumber) {
               setInitialTrackingCode(data.order.trackingNumber);
@@ -285,6 +293,10 @@ export default function App() {
   };
 
   const handleProceedToStripe = async (itemsToPay?: CartItem[]) => {
+    if (!checkoutReady) {
+      showToast('Checkout is coming soon. No payment can be taken yet.');
+      return;
+    }
     const targetItems = itemsToPay && itemsToPay.length > 0 ? itemsToPay : cartItems;
     if (targetItems.length === 0) {
       showToast('Your shopping bag is empty.');
@@ -328,7 +340,7 @@ export default function App() {
             sku: item.product.sku,
             product: {
               name: item.product.name,
-              basePriceUSD: Math.round(item.product.basePriceUSD * currentRate),
+              basePriceUSD: Math.round(item.product.basePriceUSD * currentRate * 100) / 100,
               images: item.product.images?.filter((img: string) => typeof img === 'string' && img.startsWith('http')),
               sku: item.product.sku,
             },
@@ -823,6 +835,7 @@ export default function App() {
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onProceedToCheckout={() => handleProceedToStripe()}
+        checkoutReady={checkoutReady}
       />
 
       {/* Stripe Hosted Checkout Modal */}
