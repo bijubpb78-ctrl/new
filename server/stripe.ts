@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Stripe from 'stripe';
-import { saveOrder, getOrderById, StoredOrder } from './orderStore';
+import { saveOrder, getOrderById, updateOrderFromWebhook, StoredOrder } from './orderStore';
 
 // Active Stripe credentials for fetecart.com
 // Note: STRIPE_SECRET_KEY must be supplied via Environment Variables (e.g. Vercel dashboard or .env)
@@ -14,7 +14,7 @@ let stripeClient: Stripe | null = null;
 export function getStripe(fallbackKey?: string): Stripe {
   const key = process.env.STRIPE_SECRET_KEY || fallbackKey;
   if (!key) {
-    throw new Error('STRIPE_SECRET_KEY environment variable is not configured. Please add STRIPE_SECRET_KEY in Vercel project settings or the admin portal.');
+    throw new Error('STRIPE_SECRET_KEY is not configured.');
   }
   if (!stripeClient || (fallbackKey && fallbackKey !== process.env.STRIPE_SECRET_KEY)) {
     stripeClient = new Stripe(key);
@@ -475,7 +475,9 @@ export async function confirmStripeOrder(req: Request, res: Response) {
 export async function getSessionStatus(req: Request, res: Response) {
   try {
     const stripe = getStripe();
-    const session = await stripe.checkout.sessions.retrieve(req.params.sessionId);
+    const rawSessionId = req.params.sessionId;
+    const sessionId = Array.isArray(rawSessionId) ? rawSessionId[0] : (rawSessionId as string);
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
     res.json({
       success: true,
       status: session.status,

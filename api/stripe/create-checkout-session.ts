@@ -19,7 +19,7 @@ export default async function handler(req: any, res: any) {
   if (!stripeKey) {
     return res.status(400).json({
       success: false,
-      error: 'STRIPE_SECRET_KEY is not configured. Please add STRIPE_SECRET_KEY in Vercel Project Settings -> Environment Variables, or enter it in the checkout modal.',
+      error: 'Payment gateway is temporarily unavailable. Please try again shortly.',
     });
   }
 

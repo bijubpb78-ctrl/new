@@ -146,7 +146,7 @@ ${catalogContext}
             if (clientWs.readyState === WebSocket.OPEN) {
               clientWs.send(JSON.stringify({
                 type: 'error',
-                error: (error as Error)?.message || 'Voice session error',
+                error: (error as any)?.message || 'Voice session error',
               }));
             }
           },

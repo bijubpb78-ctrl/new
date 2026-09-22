@@ -257,7 +257,7 @@ export function getCjWebhookLogs(req: Request, res: Response) {
 export function simulateCjWebhook(req: Request, res: Response) {
   const { scenario, orderId, customTracking } = req.body || {};
   const orders = getAllOrders();
-  const targetOrder = (orderId ? orders.find(o => o.orderId === orderId) : orders[0]) || {
+  const targetOrder: any = (orderId ? orders.find(o => o.orderId === orderId) : orders[0]) || {
     orderId: 'FTC-89421',
     trackingNumber: 'FTC89421034US',
     clientOrderId: 'FTC-89421'

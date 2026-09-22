@@ -26,7 +26,7 @@ import { AdminPortalModal } from './components/AdminPortalModal';
 import { ShareProductModal } from './components/ShareProductModal';
 import { PaymentBadges } from './components/PaymentBadges';
 import { getStoredProducts, subscribeToProductChanges } from './utils/productStore';
-import { getStripeSecretKey, setStripeSecretKey, isStripeSecretKey } from './utils/stripe';
+import { getStripeSecretKey } from './utils/stripe';
 import { 
   Filter, 
   Search, 
@@ -42,7 +42,6 @@ import {
   X,
   Loader2,
   AlertCircle,
-  Key,
   RefreshCw
 } from 'lucide-react';
 
@@ -93,7 +92,6 @@ export default function App() {
   const [policyModalTab, setPolicyModalTab] = useState<PolicyTab>('about');
   const [adminPortalOpen, setAdminPortalOpen] = useState(false);
   const [stripeCheckoutError, setStripeCheckoutError] = useState<string | null>(null);
-  const [quickSecretKeyInput, setQuickSecretKeyInput] = useState('');
 
   // Deep-link detection on initial page load and history navigation
   useEffect(() => {
@@ -913,51 +911,15 @@ export default function App() {
                   <span>Preparing your official 256-bit Stripe checkout session...</span>
                 </div>
               ) : stripeCheckoutError ? (
-                <div className="p-3 bg-red-950/40 border border-red-500/30 rounded-xl text-left space-y-2.5">
-                  <div className="flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                    <div className="space-y-1">
-                      <p className="text-xs font-semibold text-red-300">Payment Setup Notice</p>
-                      <p className="text-[11px] text-stone-300 leading-relaxed font-sans">{stripeCheckoutError}</p>
-                    </div>
+                <div className="p-3.5 bg-stone-900/60 rounded-xl border border-stone-800 text-center space-y-2.5">
+                  <div className="flex items-center justify-center gap-2 text-stone-300 text-xs">
+                    <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Unable to connect to Stripe gateway at this moment.</span>
                   </div>
-
-                  {/* If key is missing or needs input */}
-                  <div className="pt-2 border-t border-red-500/20 space-y-2">
-                    <label className="text-[10px] uppercase font-mono text-stone-400 flex items-center gap-1.5">
-                      <Key className="w-3 h-3 text-amber-400" />
-                      <span>Enter Stripe Secret Key (`sk_live_...` or `sk_test_...`)</span>
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="password"
-                        placeholder="sk_live_..."
-                        value={quickSecretKeyInput}
-                        onChange={(e) => setQuickSecretKeyInput(e.target.value)}
-                        className="flex-1 bg-stone-900 border border-stone-700 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 font-mono"
-                      />
-                      <button
-                        onClick={() => {
-                          if (quickSecretKeyInput.trim()) {
-                            setStripeSecretKey(quickSecretKeyInput.trim());
-                            handleProceedToStripe(modalCheckoutItems);
-                          }
-                        }}
-                        disabled={!quickSecretKeyInput.trim()}
-                        className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-stone-950 font-bold text-xs rounded-lg transition-all shrink-0 cursor-pointer"
-                      >
-                        Save & Pay
-                      </button>
-                    </div>
-                    <p className="text-[10px] text-stone-400">
-                      Tip: For permanent setup on your live site, add <code className="text-amber-300 bg-black/40 px-1 py-0.5 rounded">STRIPE_SECRET_KEY</code> in your Vercel Project Settings → Environment Variables.
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-1">
+                  <div className="flex items-center justify-center gap-2 pt-1">
                     <button
                       onClick={() => handleProceedToStripe(modalCheckoutItems)}
-                      className="flex-1 py-2 px-3 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-medium flex items-center justify-center gap-1.5 cursor-pointer"
+                      className="py-2 px-4 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                     >
                       <RefreshCw className="w-3 h-3" />
                       <span>Retry Checkout</span>
@@ -967,9 +929,9 @@ export default function App() {
                         setIsRedirectingToStripe(false);
                         setStripeCheckoutError(null);
                       }}
-                      className="py-2 px-3 rounded-lg bg-transparent hover:bg-stone-800 text-stone-400 hover:text-stone-200 text-xs font-medium cursor-pointer"
+                      className="py-2 px-3 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-medium cursor-pointer"
                     >
-                      Close
+                      Cancel
                     </button>
                   </div>
                 </div>
