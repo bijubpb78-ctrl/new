@@ -1840,7 +1840,7 @@ export const AdminPortalModal: React.FC<AdminPortalModalProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] px-2 py-0.5 rounded border font-mono flex items-center gap-1 text-emerald-400 bg-emerald-950/80 border-emerald-800/50">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>Configure in Vercel</span>
+                        <span>Configure in Cloudflare</span>
                       </span>
                       <span className={`text-[10px] px-2 py-0.5 rounded border font-mono flex items-center gap-1 ${
                         isStripeLiveMode(stripeKeyInput || getStripePublishableKey())
@@ -1857,7 +1857,7 @@ export const AdminPortalModal: React.FC<AdminPortalModalProps> = ({
                   </p>
 
                   <p className="text-xs text-amber-300 leading-relaxed rounded-xl border border-amber-800/50 bg-amber-950/20 p-3">
-                    Stripe secret keys must be saved in Vercel Settings → Environment Variables as STRIPE_SECRET_KEY. Never enter a secret key on this website or store it in the browser.
+                    Stripe secret keys must be saved as encrypted secrets in Cloudflare Pages Settings → Variables and Secrets under the name STRIPE_SECRET_KEY. Never enter a secret key on this website or store it in the browser.
                   </p>
 
                   {/* 2. Active Stripe Publishable Key Form */}
