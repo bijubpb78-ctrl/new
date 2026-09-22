@@ -11,12 +11,12 @@ const DEFAULT_STRIPE_PUBLISHABLE_KEY =
 
 let stripeClient: Stripe | null = null;
 
-export function getStripe(fallbackKey?: string): Stripe {
-  const key = process.env.STRIPE_SECRET_KEY || fallbackKey;
+export function getStripe(): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY;
   if (!key) {
     throw new Error('STRIPE_SECRET_KEY is not configured.');
   }
-  if (!stripeClient || (fallbackKey && fallbackKey !== process.env.STRIPE_SECRET_KEY)) {
+  if (!stripeClient) {
     stripeClient = new Stripe(key);
   }
   return stripeClient;
@@ -166,7 +166,7 @@ export async function createPaymentIntent(req: Request, res: Response) {
  */
 export async function createCheckoutSession(req: Request, res: Response) {
   try {
-    const stripe = getStripe(req.body?.stripeSecretKey);
+    const stripe = getStripe();
     const {
       items = [],
       currency = 'usd',

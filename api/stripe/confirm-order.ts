@@ -1,43 +1,27 @@
-import Stripe from 'stripe';
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 
-export default async function handler(req: any, res: any) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  const stripeKey = process.env.STRIPE_SECRET_KEY || req.body?.stripeSecretKey;
-  const { sessionId } = req.body || {};
-
-  if (!sessionId) {
-    return res.status(400).json({ success: false, error: 'Missing sessionId' });
-  }
-
-  if (!stripeKey) {
-    return res.status(200).json({
-      success: true,
-      paid: true,
-      message: 'Order confirmed successfully (pending webhook confirmation)',
-    });
-  }
-
+export async function POST(request: Request): Promise<Response> {
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  if (!stripeKey) return json({ success: false, error: 'Checkout is not configured.' }, 503);
+  let sessionId: unknown;
   try {
-    const stripe = new Stripe(stripeKey);
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-    return res.status(200).json({
-      success: true,
-      paid: session.payment_status === 'paid',
-      customerEmail: session.customer_details?.email,
-      orderId: session.client_reference_id || session.metadata?.orderId,
+    sessionId = (await request.json() as { sessionId?: unknown }).sessionId;
+  } catch {
+    return json({ success: false, error: 'Invalid request.' }, 400);
+  }
+  if (typeof sessionId !== 'string' || !/^cs_(test|live)_[A-Za-z0-9]+$/.test(sessionId)) {
+    return json({ success: false, error: 'Invalid checkout session.' }, 400);
+  }
+  try {
+    const response = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
+      headers: { Authorization: `Bearer ${stripeKey}` },
     });
-  } catch (err: any) {
-    return res.status(200).json({
-      success: true,
-      paid: true,
-      warning: err.message,
-    });
+    if (!response.ok) return json({ success: false, error: 'Unable to verify payment.' }, 502);
+    const session = await response.json() as { payment_status?: string; client_reference_id?: string };
+    if (session.payment_status !== 'paid') return json({ success: false, error: 'Payment has not been completed.' }, 409);
+    return json({ success: true, mode: sessionId.startsWith('cs_test_') ? 'test' : 'live', order: { orderId: session.client_reference_id } });
+  } catch {
+    return json({ success: false, error: 'Unable to verify payment.' }, 502);
   }
 }

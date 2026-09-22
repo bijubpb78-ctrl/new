@@ -1,117 +1,92 @@
-import type { IncomingMessage, ServerResponse } from 'http';
-import Stripe from 'stripe';
+import { PILATES_PRODUCTS } from '../../src/data/products';
+import { CURRENCY_CONFIGS } from '../../src/utils/currency';
 
-export default async function handler(req: any, res: any) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
+
+export async function POST(request: Request): Promise<Response> {
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  if (!stripeKey || !/^sk_(test|live)_/.test(stripeKey)) return json({ success: false, error: 'Stripe secret key is missing or invalid in Vercel settings. Add STRIPE_SECRET_KEY and redeploy.' }, 503);
+
+  let body: { items?: { sku?: string; quantity?: number }[]; currency?: string };
+  try {
+    body = await request.json();
+  } catch {
+    return json({ success: false, error: 'Invalid cart.' }, 400);
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ success: false, error: 'Method Not Allowed' });
+  if (!Array.isArray(body.items) || body.items.length === 0 || body.items.length > 30) {
+    return json({ success: false, error: 'Invalid cart.' }, 400);
+  }
+  const currency = (body.currency || 'usd').toUpperCase();
+  if (!(currency in CURRENCY_CONFIGS)) return json({ success: false, error: 'Unsupported currency.' }, 400);
+  const rate = CURRENCY_CONFIGS[currency as keyof typeof CURRENCY_CONFIGS].rate;
+  const fields = new URLSearchParams();
+  const orderId = `FTC-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+
+  for (const [index, item] of body.items.entries()) {
+    const product = item && PILATES_PRODUCTS.find((p) => p.sku === item.sku);
+    const quantity = Number(item?.quantity);
+    if (!product || !Number.isInteger(quantity) || quantity < 1 || quantity > 20) {
+      return json({ success: false, error: 'Cart contains an invalid product or quantity.' }, 400);
+    }
+    // Only server-side catalog prices are used. Browser-supplied prices are ignored.
+    const amount = Math.round(product.basePriceUSD * rate * 100);
+    fields.set(`line_items[${index}][price_data][currency]`, currency.toLowerCase());
+    fields.set(`line_items[${index}][price_data][unit_amount]`, String(amount));
+    fields.set(`line_items[${index}][price_data][product_data][name]`, product.name);
+    fields.set(`line_items[${index}][price_data][product_data][metadata][sku]`, product.sku);
+    fields.set(`line_items[${index}][quantity]`, String(quantity));
   }
 
-  const stripeKey = process.env.STRIPE_SECRET_KEY || req.body?.stripeSecretKey;
-  if (!stripeKey) {
-    return res.status(400).json({
-      success: false,
-      error: 'Payment gateway is temporarily unavailable. Please try again shortly.',
-    });
-  }
+  const origin = new URL(request.url).origin;
+  fields.set('mode', 'payment');
+  fields.set('client_reference_id', orderId);
+  fields.set('metadata[orderId]', orderId);
+  fields.set('success_url', `${origin}/?stripe_session_id={CHECKOUT_SESSION_ID}`);
+  fields.set('cancel_url', `${origin}/?stripe_cancel=true`);
+  fields.set('billing_address_collection', 'auto');
+  fields.set('shipping_address_collection[allowed_countries][0]', 'US');
+  fields.set('shipping_address_collection[allowed_countries][1]', 'CA');
+  fields.set('shipping_address_collection[allowed_countries][2]', 'GB');
+  fields.set('shipping_address_collection[allowed_countries][3]', 'AU');
+  fields.set('shipping_address_collection[allowed_countries][4]', 'DE');
+  fields.set('shipping_address_collection[allowed_countries][5]', 'FR');
+  fields.set('shipping_address_collection[allowed_countries][6]', 'ES');
+  fields.set('shipping_address_collection[allowed_countries][7]', 'IT');
+  fields.set('shipping_address_collection[allowed_countries][8]', 'NL');
+  fields.set('shipping_address_collection[allowed_countries][9]', 'IE');
+  fields.set('shipping_address_collection[allowed_countries][10]', 'NZ');
+  fields.set('shipping_address_collection[allowed_countries][11]', 'SG');
+  fields.set('shipping_address_collection[allowed_countries][12]', 'CH');
+  fields.set('shipping_address_collection[allowed_countries][13]', 'SE');
+  fields.set('shipping_address_collection[allowed_countries][14]', 'NO');
+  fields.set('shipping_address_collection[allowed_countries][15]', 'DK');
+  fields.set('shipping_address_collection[allowed_countries][16]', 'AT');
+  fields.set('shipping_address_collection[allowed_countries][17]', 'BE');
+  fields.set('shipping_address_collection[allowed_countries][18]', 'PL');
+  fields.set('shipping_address_collection[allowed_countries][19]', 'PT');
+  fields.set('shipping_address_collection[allowed_countries][20]', 'IN');
 
   try {
-    const stripe = new Stripe(stripeKey);
-    const {
-      items = [],
-      currency = 'usd',
-      orderId,
-      customerEmail,
-      customerName,
-      shippingAddress,
-      successUrl,
-      cancelUrl,
-    } = req.body || {};
-
-    if (!items || items.length === 0) {
-      return res.status(400).json({ success: false, error: 'Cart is empty' });
+    const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${stripeKey}`, 'content-type': 'application/x-www-form-urlencoded' },
+      body: fields,
+    });
+    const session = await response.json() as { id?: string; url?: string };
+    if (!response.ok || !session.url) {
+      console.error('Stripe checkout session creation failed', response.status);
+      const error = response.status === 401
+        ? 'Stripe rejected the secret key. Check STRIPE_SECRET_KEY in Vercel and redeploy.'
+        : response.status === 400
+          ? 'Stripe rejected the checkout details. Check your Stripe account and product settings.'
+          : 'Stripe checkout could not start. Please try again later.';
+      return json({ success: false, error }, 502);
     }
-
-    const currentOrderId = orderId || `FTC-${Math.floor(10000 + Math.random() * 90000)}`;
-
-    let origin = (req.headers.origin && req.headers.origin !== 'null') ? req.headers.origin : '';
-    if (!origin && req.headers.referer && req.headers.referer !== 'null') {
-      try {
-        const refUrl = new URL(req.headers.referer);
-        origin = `${refUrl.protocol}//${refUrl.host}`;
-      } catch {
-        origin = '';
-      }
-    }
-    if (!origin || origin === 'null' || !origin.startsWith('http')) {
-      origin = 'https://www.fetecart.com';
-    }
-
-    const line_items = items.map((item: any) => {
-      const unitPrice = item.price || item.product?.basePriceUSD || 100;
-      const unitAmountInCents = Math.round(Number(unitPrice) * 100);
-      const productName = item.productName || item.product?.name || 'Studio Pilates Apparatus';
-
-      return {
-        price_data: {
-          currency: String(currency).toLowerCase(),
-          product_data: {
-            name: productName,
-            metadata: {
-              sku: item.sku || item.product?.sku || '',
-            },
-          },
-          unit_amount: unitAmountInCents,
-        },
-        quantity: Math.max(1, Number(item.quantity) || 1),
-      };
-    });
-
-    const defaultSuccessUrl = `${origin}/?stripe_session_id={CHECKOUT_SESSION_ID}&order_id=${currentOrderId}&payment_status=success`;
-    const defaultCancelUrl = `${origin}/?stripe_cancel=true`;
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items,
-      mode: 'payment',
-      success_url: successUrl || defaultSuccessUrl,
-      cancel_url: cancelUrl || defaultCancelUrl,
-      customer_email: customerEmail || undefined,
-      client_reference_id: currentOrderId,
-      metadata: {
-        orderId: currentOrderId,
-        customerName: customerName || (shippingAddress?.fullName) || '',
-        customerEmail: customerEmail || '',
-        currency: String(currency).toUpperCase(),
-      },
-      shipping_address_collection: {
-        allowed_countries: [
-          'US', 'CA', 'GB', 'AU', 'NZ', 'DE', 'FR', 'IT', 'ES', 'NL',
-          'BE', 'AT', 'CH', 'SE', 'NO', 'DK', 'FI', 'IE', 'PT', 'SG',
-          'AE', 'SA', 'JP', 'KR', 'HK', 'IN', 'ZA', 'BR', 'MX'
-        ],
-      },
-    });
-
-    return res.status(200).json({
-      success: true,
-      url: session.url,
-      sessionId: session.id,
-      orderId: currentOrderId,
-    });
-  } catch (err: any) {
-    console.error('[Vercel Serverless Stripe Error]:', err);
-    return res.status(500).json({
-      success: false,
-      error: err.message || 'Failed to create checkout session',
-    });
+    return json({ success: true, sessionId: session.id, url: session.url, orderId });
+  } catch {
+    return json({ success: false, error: 'Stripe checkout could not start. Please try again later.' }, 502);
   }
 }

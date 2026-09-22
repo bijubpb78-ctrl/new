@@ -21,6 +21,7 @@ interface CartDrawerProps {
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveItem: (productId: string) => void;
   onProceedToCheckout: () => void;
+  checkoutMode: 'unavailable' | 'test' | 'live';
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -31,6 +32,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onUpdateQuantity,
   onRemoveItem,
   onProceedToCheckout,
+  checkoutMode,
 }) => {
   if (!isOpen) return null;
 
@@ -194,17 +196,18 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
             <button
               onClick={onProceedToCheckout}
+              disabled={checkoutMode === 'unavailable'}
               id="cart-proceed-checkout-btn"
               className="w-full py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg active:scale-98 cursor-pointer"
             >
-              <span>Proceed to Stripe Checkout</span>
+              <span>{checkoutMode === 'test' ? 'Try Stripe Test Checkout' : checkoutMode === 'live' ? 'Proceed to Stripe Checkout' : 'Checkout coming soon'}</span>
               <ArrowRight className="w-4 h-4 text-stone-950" />
             </button>
 
             {/* Sourcing note */}
             <div className="text-[10px] text-stone-500 text-center flex items-center justify-center gap-1.5 pt-0.5">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Official Stripe Hosted Checkout · 256-Bit Encryption</span>
+              <span>{checkoutMode === 'test' ? 'Test mode: no real money will be taken' : checkoutMode === 'live' ? 'Secure checkout hosted by Stripe' : 'Payments are not available yet'}</span>
             </div>
           </div>
         )}

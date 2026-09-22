@@ -26,7 +26,6 @@ import { AdminPortalModal } from './components/AdminPortalModal';
 import { ShareProductModal } from './components/ShareProductModal';
 import { PaymentBadges } from './components/PaymentBadges';
 import { getStoredProducts, subscribeToProductChanges } from './utils/productStore';
-import { getStripeSecretKey } from './utils/stripe';
 import { 
   Filter, 
   Search, 
@@ -92,6 +91,15 @@ export default function App() {
   const [policyModalTab, setPolicyModalTab] = useState<PolicyTab>('about');
   const [adminPortalOpen, setAdminPortalOpen] = useState(false);
   const [stripeCheckoutError, setStripeCheckoutError] = useState<string | null>(null);
+  const [checkoutMode, setCheckoutMode] = useState<'unavailable' | 'test' | 'live'>('unavailable');
+
+  useEffect(() => {
+    localStorage.removeItem('fetecart_stripe_secret_key');
+    fetch('/api/stripe/status')
+      .then((res) => res.ok ? res.json() : { mode: 'unavailable' })
+      .then((data) => setCheckoutMode(data.mode === 'test' || data.mode === 'live' ? data.mode : 'unavailable'))
+      .catch(() => setCheckoutMode('unavailable'));
+  }, []);
 
   // Deep-link detection on initial page load and history navigation
   useEffect(() => {
@@ -122,7 +130,9 @@ export default function App() {
             setCartItems([]);
             localStorage.removeItem('fetecart_cart');
             setToastMessage(
-              `Stripe payment verified! Funds deducted. Order ${data.order.orderId} is confirmed.`
+              data.mode === 'test'
+                ? `Test payment completed. No money was charged. Order ${data.order.orderId}.`
+                : `Stripe payment verified. Order ${data.order.orderId} is confirmed.`
             );
             if (data.order.trackingNumber) {
               setInitialTrackingCode(data.order.trackingNumber);
@@ -284,6 +294,10 @@ export default function App() {
   };
 
   const handleProceedToStripe = async (itemsToPay?: CartItem[]) => {
+    if (checkoutMode === 'unavailable') {
+      showToast('Checkout is not configured yet. No payment can be taken.');
+      return;
+    }
     const targetItems = itemsToPay && itemsToPay.length > 0 ? itemsToPay : cartItems;
     if (targetItems.length === 0) {
       showToast('Your shopping bag is empty.');
@@ -317,27 +331,24 @@ export default function App() {
           ? window.location.origin
           : 'https://www.fetecart.com';
 
-      const configuredSecretKey = getStripeSecretKey();
-
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: targetItems.map(item => ({
             productName: item.product.name,
-            price: Math.round(item.product.basePriceUSD * currentRate),
+            price: Math.round(item.product.basePriceUSD * currentRate * 100) / 100,
             quantity: item.quantity,
             sku: item.product.sku,
             product: {
               name: item.product.name,
-              basePriceUSD: Math.round(item.product.basePriceUSD * currentRate),
+              basePriceUSD: Math.round(item.product.basePriceUSD * currentRate * 100) / 100,
               images: item.product.images?.filter((img: string) => typeof img === 'string' && img.startsWith('http')),
               sku: item.product.sku,
             },
           })),
           currency: currency.toLowerCase(),
           orderId,
-          stripeSecretKey: configuredSecretKey || undefined,
           successUrl: `${cleanOrigin}/?stripe_session_id={CHECKOUT_SESSION_ID}&order_id=${orderId}&payment_status=success`,
           cancelUrl: `${cleanOrigin}/?stripe_cancel=true`,
         }),
@@ -826,6 +837,7 @@ export default function App() {
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onProceedToCheckout={() => handleProceedToStripe()}
+        checkoutMode={checkoutMode}
       />
 
       {/* Stripe Hosted Checkout Modal */}
@@ -914,7 +926,7 @@ export default function App() {
                 <div className="p-3.5 bg-stone-900/60 rounded-xl border border-stone-800 text-center space-y-2.5">
                   <div className="flex items-center justify-center gap-2 text-stone-300 text-xs">
                     <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Unable to connect to Stripe gateway at this moment.</span>
+                    <span>{stripeCheckoutError}</span>
                   </div>
                   <div className="flex items-center justify-center gap-2 pt-1">
                     <button
