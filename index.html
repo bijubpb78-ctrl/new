@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="ai-assistant.css" />
   </head>
   <body>
     <header class="site-header">
@@ -16,6 +17,7 @@
       <nav aria-label="Main navigation">
         <a href="#shop">Shop</a>
         <a href="#story">Our story</a>
+        <a href="#assistant">AI stylist</a>
         <a href="#contact">Contact</a>
       </nav>
       <a class="cart" href="#shop">Cart <span>0</span></a>
@@ -38,11 +40,41 @@
 
       <section class="collection" id="shop">
         <div><p class="eyebrow">The edit</p><h2>Made to be lived with.</h2></div>
-        <a class="text-link" href="#shop">View all products <span>↗</span></a>
+        <a class="text-link" href="#assistant">Ask our AI stylist <span>↗</span></a>
       </section>
-      <section class="story" id="story"><p class="eyebrow">Why Fetecart</p><p>We believe the things around you should feel as good as they look. Every piece is selected with intention, from makers who care about their craft.</p></section>
+
+      <section class="assistant-section" id="assistant" aria-labelledby="assistant-title">
+        <div class="assistant-intro">
+          <p class="eyebrow">Meet your AI stylist</p>
+          <h2 id="assistant-title">Find something<br /><em>just right.</em></h2>
+          <p>Tell our Gemini-powered stylist what you are looking for. Get thoughtful suggestions based on your space, taste, and everyday rituals.</p>
+          <div class="ai-note"><span>✦</span> Your API key stays in this browser session.</div>
+        </div>
+        <div class="assistant-card">
+          <div class="assistant-card-head"><span class="status-dot"></span><strong>Fetecart stylist</strong><span class="powered-by">Powered by Gemini</span></div>
+          <div class="chat-log" id="chat-log" aria-live="polite">
+            <div class="message assistant-message">Hi, I’m your Fetecart stylist. What kind of feeling are you hoping to bring home?</div>
+          </div>
+          <div class="suggestions" aria-label="Suggested prompts">
+            <button type="button" data-prompt="Help me create a calm, warm reading corner.">Calm reading corner</button>
+            <button type="button" data-prompt="I need a thoughtful gift under $75.">A thoughtful gift</button>
+            <button type="button" data-prompt="Suggest something for a small apartment.">Small apartment</button>
+          </div>
+          <form class="chat-form" id="chat-form">
+            <label class="sr-only" for="api-key">Google AI Studio API key</label>
+            <input id="api-key" type="password" autocomplete="off" placeholder="Paste your Google AI Studio API key" required />
+            <label class="sr-only" for="chat-input">Ask the AI stylist</label>
+            <input id="chat-input" type="text" placeholder="What are you looking for?" required />
+            <button type="submit" aria-label="Send message">Send <span>→</span></button>
+          </form>
+          <p class="key-help">Get a key from <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer">Google AI Studio</a>. It is used only for this session.</p>
+        </div>
+      </section>
+
+      <section class="story" id="story"><p class="eyebrow">Why Fetecart</p><p>We believe the things around you should feel as good as they look. Every piece is selected with intention, from makers who care about materials, process, and the small details that make a house feel like home.</p></section>
     </main>
 
     <footer id="contact"><span>© 2025 Fetecart</span><span>Made with intention.</span></footer>
+    <script src="app.js" defer></script>
   </body>
 </html>
