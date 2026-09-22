@@ -2,19 +2,20 @@ import { Request, Response } from 'express';
 import Stripe from 'stripe';
 import { saveOrder, getOrderById, StoredOrder } from './orderStore';
 
-// Live Stripe credentials for fetecart.com
-const DEFAULT_STRIPE_SECRET_KEY =
-  '';
+// Active Stripe credentials for fetecart.com
+// Note: STRIPE_SECRET_KEY must be supplied via Environment Variables (e.g. Vercel dashboard or .env)
 const DEFAULT_STRIPE_PUBLISHABLE_KEY =
+  process.env.VITE_STRIPE_PUBLISHABLE_KEY ||
+  process.env.STRIPE_PUBLISHABLE_KEY ||
   'pk_live_51UGga1DH2aCzSlUFgVbSyLWYp4Wv5U2H1NzXP0F0eWX27dgfGE9txxuq5WzNzS4RtHgm85z5ecQWOT9N3E2Huh5D002rxhgqTA';
 
 let stripeClient: Stripe | null = null;
 
 export function getStripe(): Stripe {
   if (!stripeClient) {
-    const key = process.env.STRIPE_SECRET_KEY || DEFAULT_STRIPE_SECRET_KEY;
+    const key = process.env.STRIPE_SECRET_KEY;
     if (!key) {
-      throw new Error('STRIPE_SECRET_KEY is not configured');
+      throw new Error('STRIPE_SECRET_KEY environment variable is not configured. Please add STRIPE_SECRET_KEY in Vercel project settings or .env file.');
     }
     stripeClient = new Stripe(key);
   }

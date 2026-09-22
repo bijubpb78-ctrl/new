@@ -3,7 +3,8 @@
  * Manages the Stripe Publishable Key, client-side session tokens, and live/test status.
  */
 
-export const DEFAULT_STRIPE_PUBLISHABLE_KEY = 'pk_live_51UGga1DH2aCzSlUFgVbSyLWYp4Wv5U2H1NzXP0F0eWX27dgfGE9txxuq5WzNzS4RtHgm85z5ecQWOT9N3E2Huh5D002rxhgqTA';
+export const DEFAULT_STRIPE_PUBLISHABLE_KEY =
+  'pk_live_51UGga1DH2aCzSlUFgVbSyLWYp4Wv5U2H1NzXP0F0eWX27dgfGE9txxuq5WzNzS4RtHgm85z5ecQWOT9N3E2Huh5D002rxhgqTA';
 export const DEFAULT_STRIPE_SECRET_KEY = '';
 
 const STORAGE_KEY = 'fetecart_stripe_publishable_key';
@@ -39,14 +40,28 @@ export function setStripePublishableKey(newKey: string): void {
   }
 }
 
-/** Secret keys are configured only in the hosting platform, never in a browser. */
+/**
+ * Retrieves the currently configured Stripe Secret Key for fetecart.com
+ */
 export function getStripeSecretKey(): string {
-  if (typeof window !== 'undefined') localStorage.removeItem(SECRET_STORAGE_KEY);
-  return '';
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem(SECRET_STORAGE_KEY);
+    if (saved && saved.trim()) return saved.trim();
+  }
+  return DEFAULT_STRIPE_SECRET_KEY;
 }
 
-export function setStripeSecretKey(_newKey: string): void {
-  if (typeof window !== 'undefined') localStorage.removeItem(SECRET_STORAGE_KEY);
+/**
+ * Updates and persists the Stripe Secret Key
+ */
+export function setStripeSecretKey(newKey: string): void {
+  if (typeof window === 'undefined') return;
+  const clean = newKey.trim();
+  if (!clean || clean === DEFAULT_STRIPE_SECRET_KEY) {
+    localStorage.removeItem(SECRET_STORAGE_KEY);
+  } else {
+    localStorage.setItem(SECRET_STORAGE_KEY, clean);
+  }
 }
 
 /**

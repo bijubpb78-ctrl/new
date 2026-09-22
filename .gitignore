@@ -29,6 +29,4 @@ lerna-debug.log*
 *.sw?
 .DS_Store
 Thumbs.db
-
-# Cloudflare local secrets
-.dev.vars*
+*.zip
