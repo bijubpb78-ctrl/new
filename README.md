@@ -1,11 +1,14 @@
-<div align="center">
+# Fetecart
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+A small, editorial-style storefront landing page for thoughtfully selected everyday objects.
 
-  <h1>Built with AI Studio</h2>
+## Run locally
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+Open `index.html` in a browser, or serve this folder with any static web server.
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## Deploy on Vercel
 
-</div>
+1. Import this GitHub repository at [vercel.com/new](https://vercel.com/new).
+2. Select **bijubpb78-ctrl/new**.
+3. Leave the framework preset as **Other** and the build command blank.
+4. Click **Deploy**. Vercel will serve `index.html` automatically.
