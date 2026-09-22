@@ -11,12 +11,12 @@ const DEFAULT_STRIPE_PUBLISHABLE_KEY =
 
 let stripeClient: Stripe | null = null;
 
-export function getStripe(): Stripe {
-  if (!stripeClient) {
-    const key = process.env.STRIPE_SECRET_KEY;
-    if (!key) {
-      throw new Error('STRIPE_SECRET_KEY environment variable is not configured. Please add STRIPE_SECRET_KEY in Vercel project settings or .env file.');
-    }
+export function getStripe(fallbackKey?: string): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY || fallbackKey;
+  if (!key) {
+    throw new Error('STRIPE_SECRET_KEY environment variable is not configured. Please add STRIPE_SECRET_KEY in Vercel project settings or the admin portal.');
+  }
+  if (!stripeClient || (fallbackKey && fallbackKey !== process.env.STRIPE_SECRET_KEY)) {
     stripeClient = new Stripe(key);
   }
   return stripeClient;
@@ -166,7 +166,7 @@ export async function createPaymentIntent(req: Request, res: Response) {
  */
 export async function createCheckoutSession(req: Request, res: Response) {
   try {
-    const stripe = getStripe();
+    const stripe = getStripe(req.body?.stripeSecretKey);
     const {
       items = [],
       currency = 'usd',

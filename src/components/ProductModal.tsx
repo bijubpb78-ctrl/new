@@ -36,7 +36,6 @@ interface ProductModalProps {
   onClose: () => void;
   onAddToCart: (product: Product, quantity: number) => void;
   onBuyNow: (product: Product, quantity: number) => void;
-  onOpenVoiceAssistant?: (product: Product) => void;
 }
 
 export const ProductModal: React.FC<ProductModalProps> = ({
@@ -46,7 +45,6 @@ export const ProductModal: React.FC<ProductModalProps> = ({
   onClose,
   onAddToCart,
   onBuyNow,
-  onOpenVoiceAssistant,
 }) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -308,26 +306,6 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                   Buy Now with Stripe
                 </button>
               </div>
-
-              {/* Live Voice Consultation CTA */}
-              {onOpenVoiceAssistant && (
-                <button
-                  onClick={() => onOpenVoiceAssistant(product)}
-                  id="modal-voice-consultation-btn"
-                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-amber-500/5 hover:from-amber-500/25 hover:to-amber-500/15 border border-amber-500/30 hover:border-amber-400 text-amber-300 text-xs font-semibold flex items-center justify-between transition-all cursor-pointer group shadow-xs"
-                >
-                  <span className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-amber-500 text-stone-950 flex items-center justify-center shrink-0 shadow-xs">
-                      <Headphones className="w-3.5 h-3.5 text-stone-950" />
-                    </div>
-                    <span>Ask Aria about this {product.category.replace(' & ', '/')} in Real-Time Voice</span>
-                  </span>
-                  <span className="flex items-center gap-1.5 text-[10px] font-mono uppercase bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30">
-                    <Radio className="w-2.5 h-2.5 animate-pulse text-emerald-400" />
-                    <span>Gemini 3.8 Live</span>
-                  </span>
-                </button>
-              )}
 
               {/* Express Payment Wallets (GPay, Apple Pay, Amazon Pay) & Security Badges */}
               <PaymentBadges variant="checkout" />

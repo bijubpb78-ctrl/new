@@ -25,8 +25,8 @@ import { InfoPolicyModal, PolicyTab } from './components/InfoPolicyModal';
 import { AdminPortalModal } from './components/AdminPortalModal';
 import { ShareProductModal } from './components/ShareProductModal';
 import { PaymentBadges } from './components/PaymentBadges';
-import { LiveVoiceModal } from './components/LiveVoiceModal';
 import { getStoredProducts, subscribeToProductChanges } from './utils/productStore';
+import { getStripeSecretKey, setStripeSecretKey, isStripeSecretKey } from './utils/stripe';
 import { 
   Filter, 
   Search, 
@@ -41,8 +41,9 @@ import {
   Lock,
   X,
   Loader2,
-  Headphones,
-  Radio
+  AlertCircle,
+  Key,
+  RefreshCw
 } from 'lucide-react';
 
 export default function App() {
@@ -91,8 +92,8 @@ export default function App() {
   const [policyModalOpen, setPolicyModalOpen] = useState(false);
   const [policyModalTab, setPolicyModalTab] = useState<PolicyTab>('about');
   const [adminPortalOpen, setAdminPortalOpen] = useState(false);
-  const [voiceModalOpen, setVoiceModalOpen] = useState(false);
-  const [voiceModalProduct, setVoiceModalProduct] = useState<Product | null>(null);
+  const [stripeCheckoutError, setStripeCheckoutError] = useState<string | null>(null);
+  const [quickSecretKeyInput, setQuickSecretKeyInput] = useState('');
 
   // Deep-link detection on initial page load and history navigation
   useEffect(() => {
@@ -297,6 +298,7 @@ export default function App() {
     setIsRedirectingToStripe(true);
     setStripeCheckoutLoading(true);
     setStripeCheckoutUrl(null);
+    setStripeCheckoutError(null);
 
     // If running in an iframe, attempt to pre-open a new window during user click gesture to avoid browser popup blockers
     const isInsideIframe = typeof window !== 'undefined' && window.self !== window.top;
@@ -317,6 +319,8 @@ export default function App() {
           ? window.location.origin
           : 'https://www.fetecart.com';
 
+      const configuredSecretKey = getStripeSecretKey();
+
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -335,15 +339,25 @@ export default function App() {
           })),
           currency: currency.toLowerCase(),
           orderId,
+          stripeSecretKey: configuredSecretKey || undefined,
           successUrl: `${cleanOrigin}/?stripe_session_id={CHECKOUT_SESSION_ID}&order_id=${orderId}&payment_status=success`,
           cancelUrl: `${cleanOrigin}/?stripe_cancel=true`,
         }),
       });
 
-      const data = await response.json();
-      if (data.success && data.url) {
+      let data: any = null;
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(`Server returned status ${response.status}: ${text.slice(0, 120)}`);
+      }
+
+      if (data && data.success && data.url) {
         setStripeCheckoutUrl(data.url);
         setStripeCheckoutLoading(false);
+        setStripeCheckoutError(null);
 
         // If a popup tab was successfully pre-opened, navigate it directly
         if (preOpenedTab && !preOpenedTab.closed) {
@@ -367,18 +381,17 @@ export default function App() {
         if (preOpenedTab && !preOpenedTab.closed) {
           preOpenedTab.close();
         }
-        setIsRedirectingToStripe(false);
         setStripeCheckoutLoading(false);
-        showToast(data.error || 'Unable to open Stripe Checkout. Please try again.');
+        const errMsg = data?.error || 'Unable to open Stripe Checkout.';
+        setStripeCheckoutError(errMsg);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('[Stripe Redirect Error]:', err);
       if (preOpenedTab && !preOpenedTab.closed) {
         preOpenedTab.close();
       }
-      setIsRedirectingToStripe(false);
       setStripeCheckoutLoading(false);
-      showToast('Network error connecting to Stripe. Please try again.');
+      setStripeCheckoutError(err.message || 'Network error connecting to Stripe.');
     }
   };
 
@@ -471,10 +484,6 @@ export default function App() {
         cartSubtotalUSD={cartSubtotalUSD}
         onSearch={setSearchQuery}
         onOpenPolicy={handleOpenPolicy}
-        onOpenVoiceAssistant={() => {
-          setVoiceModalProduct(null);
-          setVoiceModalOpen(true);
-        }}
       />
 
       <main className="flex-1">
@@ -807,10 +816,6 @@ export default function App() {
             setCartDrawerOpen(true);
           }}
           onBuyNow={handleBuyNow}
-          onOpenVoiceAssistant={(p) => {
-            setVoiceModalProduct(p);
-            setVoiceModalOpen(true);
-          }}
         />
       )}
 
@@ -907,6 +912,67 @@ export default function App() {
                   <Loader2 className="w-4 h-4 animate-spin text-amber-400 shrink-0" />
                   <span>Preparing your official 256-bit Stripe checkout session...</span>
                 </div>
+              ) : stripeCheckoutError ? (
+                <div className="p-3 bg-red-950/40 border border-red-500/30 rounded-xl text-left space-y-2.5">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-xs font-semibold text-red-300">Payment Setup Notice</p>
+                      <p className="text-[11px] text-stone-300 leading-relaxed font-sans">{stripeCheckoutError}</p>
+                    </div>
+                  </div>
+
+                  {/* If key is missing or needs input */}
+                  <div className="pt-2 border-t border-red-500/20 space-y-2">
+                    <label className="text-[10px] uppercase font-mono text-stone-400 flex items-center gap-1.5">
+                      <Key className="w-3 h-3 text-amber-400" />
+                      <span>Enter Stripe Secret Key (`sk_live_...` or `sk_test_...`)</span>
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="password"
+                        placeholder="sk_live_..."
+                        value={quickSecretKeyInput}
+                        onChange={(e) => setQuickSecretKeyInput(e.target.value)}
+                        className="flex-1 bg-stone-900 border border-stone-700 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-stone-500 focus:outline-none focus:border-amber-400 font-mono"
+                      />
+                      <button
+                        onClick={() => {
+                          if (quickSecretKeyInput.trim()) {
+                            setStripeSecretKey(quickSecretKeyInput.trim());
+                            handleProceedToStripe(modalCheckoutItems);
+                          }
+                        }}
+                        disabled={!quickSecretKeyInput.trim()}
+                        className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-stone-950 font-bold text-xs rounded-lg transition-all shrink-0 cursor-pointer"
+                      >
+                        Save & Pay
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-stone-400">
+                      Tip: For permanent setup on your live site, add <code className="text-amber-300 bg-black/40 px-1 py-0.5 rounded">STRIPE_SECRET_KEY</code> in your Vercel Project Settings → Environment Variables.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      onClick={() => handleProceedToStripe(modalCheckoutItems)}
+                      className="flex-1 py-2 px-3 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-medium flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <RefreshCw className="w-3 h-3" />
+                      <span>Retry Checkout</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsRedirectingToStripe(false);
+                        setStripeCheckoutError(null);
+                      }}
+                      className="py-2 px-3 rounded-lg bg-transparent hover:bg-stone-800 text-stone-400 hover:text-stone-200 text-xs font-medium cursor-pointer"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
               ) : stripeCheckoutUrl ? (
                 <div className="space-y-2 pt-1">
                   <a
@@ -970,58 +1036,6 @@ export default function App() {
         onClose={() => setShareModalProduct(null)}
         currentCurrency={currency}
       />
-
-      {/* Real-Time Live Voice Concierge (Powered by gemini-3.8-live) */}
-      <LiveVoiceModal
-        isOpen={voiceModalOpen}
-        onClose={() => setVoiceModalOpen(false)}
-        activeProduct={voiceModalProduct}
-        onSelectProduct={(p) => {
-          setVoiceModalOpen(false);
-          setActiveProductModal(p);
-        }}
-      />
-
-      {/* Floating Voice Concierge Quick-Launch Pill (Desktop & Mobile) */}
-      {!voiceModalOpen && (
-        <aside
-          aria-label="Atelier Voice Concierge Quick Action"
-          className="fixed bottom-6 left-6 z-40"
-        >
-          <button
-            onClick={() => {
-              setVoiceModalProduct(null);
-              setVoiceModalOpen(true);
-            }}
-            id="floating-voice-concierge-trigger"
-            className="flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#181815]/95 hover:bg-[#22221e] border border-amber-500/40 hover:border-amber-400 text-amber-300 shadow-2xl shadow-black/80 backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer group"
-            title="Speak with Aria · Live Pilates Voice Specialist"
-          >
-            <div className="relative flex items-center justify-center">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 text-stone-950 flex items-center justify-center font-bold shadow-md shadow-amber-500/30 group-hover:rotate-12 transition-transform">
-                <Headphones className="w-4 h-4 text-stone-950" />
-              </div>
-              <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border border-stone-950"></span>
-              </span>
-            </div>
-
-            <div className="flex flex-col text-left pr-1">
-              <span className="text-xs font-serif font-bold text-white tracking-wide flex items-center gap-1.5">
-                <span>Talk with Aria</span>
-                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-sm bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  LIVE
-                </span>
-              </span>
-              <span className="text-[10px] text-stone-400 font-sans">
-                Ask Pilates & Shipping Questions
-              </span>
-            </div>
-          </button>
-        </aside>
-      )}
-
     </div>
   );
 }

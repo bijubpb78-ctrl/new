@@ -18,7 +18,6 @@ import {
   Sparkles,
   Layers,
   Lock,
-  Headphones,
   Radio
 } from 'lucide-react';
 import { CurrencyCode } from '../types';
@@ -36,7 +35,6 @@ interface NavbarProps {
   cartSubtotalUSD: number;
   onSearch: (query: string) => void;
   onOpenPolicy?: (tab: PolicyTab) => void;
-  onOpenVoiceAssistant?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -50,7 +48,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   cartSubtotalUSD,
   onSearch,
   onOpenPolicy,
-  onOpenVoiceAssistant,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
@@ -294,25 +291,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
 
-            {/* Voice Consultation Button with Gemini 3.8 Live */}
-            {onOpenVoiceAssistant && (
-              <button
-                onClick={onOpenVoiceAssistant}
-                id="navbar-voice-concierge-btn"
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl border border-amber-500/30 hover:border-amber-400 transition-all cursor-pointer shadow-xs active:scale-98 group"
-                title="Talk with Aria · AI Voice Concierge (Gemini 3.8 Live)"
-              >
-                <div className="relative flex items-center justify-center">
-                  <Headphones className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
-                  <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                </div>
-                <span className="hidden sm:inline">Voice Concierge</span>
-              </button>
-            )}
-
             {/* Order Tracking Button (Desktop) */}
             <button
               onClick={onOpenTracking}
@@ -435,24 +413,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}
 
           <div className="pt-3 border-t border-stone-800 flex flex-col gap-2">
-            {onOpenVoiceAssistant && (
-              <button
-                onClick={() => {
-                  onOpenVoiceAssistant();
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full flex items-center justify-between px-3 py-2.5 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl text-amber-300 text-sm font-semibold border border-amber-500/30"
-              >
-                <span className="flex items-center gap-2">
-                  <Headphones className="w-4 h-4 text-amber-400" />
-                  <span>Talk with Aria · AI Voice Concierge</span>
-                </span>
-                <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-mono">
-                  LIVE
-                </span>
-              </button>
-            )}
-
             <button
               onClick={() => {
                 onOpenTracking();

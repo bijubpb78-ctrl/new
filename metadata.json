@@ -1,6 +1,6 @@
 {
   "name": "Fetecart - Studio Pilates Equipment & Apparatus",
   "description": "Shop studio-grade Pilates equipment and apparatus at Fetecart: foldable reformers, sitting boxes, balance dome trainers, spine correctors, mats and resistance gear with global express shipping.",
-  "requestFramePermissions": ["microphone"],
+  "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
