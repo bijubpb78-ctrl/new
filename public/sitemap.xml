@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- Main Store Home -->
+  <url>
+    <loc>https://fetecart.com/</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Category Views -->
+  <url>
+    <loc>https://fetecart.com/?category=Reformers%20%26%20Towers</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?category=Props%20%26%20Resistance</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?category=Barrels%20%26%20Arcs</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?category=Cardio%20%26%20Apparatus</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?category=Mats%20%26%20Platforms</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?category=Grip%20%26%20Studio%20Wear</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Product Landing Pages (21 Direct Apparatus) -->
+  <url>
+    <loc>https://fetecart.com/?product=balance-half-ball-dome-trainer-resistance-tubing</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://cf.cjdropshipping.com/17660160/e2bab79d-54f5-4f78-99ad-5c8dab4386fc.jpg</image:loc>
+      <image:title>The 23" Balance Half Ball Dome Trainer with Resistance Tubing</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=studio-pilates-reformer-sitting-box-accessory</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://cf.cjdropshipping.com/17661024/4d722543-968d-4037-8de6-5e7e7fb52e64.jpg</image:loc>
+      <image:title>The Studio Pilates Reformer Sitting Box (25" × 17" × 9")</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=foldable-home-studio-pilates-reformer-alloy-springs</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://cf.cjdropshipping.com/fc7f0310-aee1-4abf-94db-89d20dd7e350.png</image:loc>
+      <image:title>The Foldable Home Studio Pilates Reformer with High-Strength Alloy Springs</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=14-piece-all-in-one-pilates-studio-training-set-arm-stretcher</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://cf.cjdropshipping.com/4a667499-b9cc-4627-a71c-1c1b26d181c5.jpg</image:loc>
+      <image:title>14-Piece All-in-One Pilates Studio Training Set with Arm Stretcher &amp; Ring</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=14-piece-pilates-ring-studio-essentials-conditioning-kit</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://cf.cjdropshipping.com/17790624/34416353-41b6-4240-83a5-039ddf1fe463.jpg</image:loc>
+      <image:title>14-Piece Pilates Ring &amp; Studio Essentials Conditioning Kit</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=foldable-studio-home-pilates-reformer</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/reformer_hd_studio_1789750074969.jpg</image:loc>
+      <image:title>The Foldable Studio Home Pilates Reformer</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=nonslip-studio-pilates-yoga-grip-socks-black</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/black_pilates_grip_socks_1789747685725.jpg</image:loc>
+      <image:title>Non-Slip Studio Grip Socks (Onyx Black)</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=6-tube-pedal-puller-resistance-rope-foot-exercise-band</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/pedal_puller_band_studio_1789747941988.jpg</image:loc>
+      <image:title>6-Tube Pedal Puller Resistance Rope &amp; Foot Exercise Band</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=hydraulic-twist-mini-stepper-resistance-bands</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/mini_stepper_studio_1789748158583.jpg</image:loc>
+      <image:title>Hydraulic Twist Mini Stepper with Upper Body Resistance Bands</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=3-piece-pilates-yoga-loop-resistance-bands-set-bag</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/resistance_bands_set_1789748171890.jpg</image:loc>
+      <image:title>3-Piece Pilates &amp; Yoga Loop Resistance Bands Set with Travel Bag</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=portable-studio-pilates-bar-kit-cloth-encased-bands</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/pilates_bar_kit_studio_1789748620707.jpg</image:loc>
+      <image:title>Portable Studio Pilates Bar Kit with Cloth-Encased Resistance Bands</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=figure-8-ergonomic-silicone-resistance-band-posture-expander</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/figure_8_band_studio_1789748955053.jpg</image:loc>
+      <image:title>Figure 8 Ergonomic Silicone Resistance Band &amp; Posture Expander</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=studio-extra-thick-15mm-nbr-pilates-yoga-mat-carry-harness</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/nbr_mat_black_studio_1789749105260.jpg</image:loc>
+      <image:title>Studio Extra-Thick 15mm High-Density NBR Pilates &amp; Yoga Mat with Carry Harness</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=adjustable-ankle-strap-resistance-band-system-3-tube</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/ankle_strap_bands_studio_1789749451248.jpg</image:loc>
+      <image:title>Adjustable Ankle Strap Resistance Band System (3-Color 3-Tube Set)</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=2-in-1-dual-mode-speed-jump-rope-cordless-weighted-ball-set</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/jump_rope_blue_studio_1789750099250.jpg</image:loc>
+      <image:title>2-in-1 Dual-Mode Speed Jump Rope &amp; Cordless Weighted Ball Set</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=studio-epp-modular-pilates-spine-corrector-arc-barrel</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/spine_corrector_studio_1789750111100.jpg</image:loc>
+      <image:title>Studio EPP Modular Pilates Spine Corrector &amp; Ergonomic Arc Barrel</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=foldable-core-abdominal-muscle-wheel-workout-roller</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/ab_wheel_studio_1789878969729.jpg</image:loc>
+      <image:title>Foldable Core Abdominal Muscle Wheel &amp; Ergonomic Workout Roller</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=classical-studio-reformer-sitting-box-burgundy</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/burgundy_box_studio_1789782387573.jpg</image:loc>
+      <image:title>Classical Studio Reformer Sitting Box (Deep Burgundy Upholstery)</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=non-slip-microfiber-pilates-reformer-carriage-towel</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/reformer_towel_studio_1789782375003.jpg</image:loc>
+      <image:title>Non-Slip Microfiber Pilates Reformer Carriage Towel &amp; Studio Mat</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=anti-burst-mini-pilates-core-stability-ball-25cm</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/pilates_ball_studio_1789782354530.jpg</image:loc>
+      <image:title>Anti-Burst Mini Pilates Core &amp; Pelvic Stability Ball (25cm)</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://fetecart.com/?product=ergonomic-360-ring-muscle-clamp-roller-myofascial-massager</loc>
+    <lastmod>2026-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+    <image:image>
+      <image:loc>https://fetecart.com/images/cjam_massage_roller_studio_1789880025853.jpg</image:loc>
+      <image:title>Ergonomic 360° Ring Muscle Clamp Roller &amp; Myofascial Release Massager</image:title>
+    </image:image>
+  </url>
+</urlset>

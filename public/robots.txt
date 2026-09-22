@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Sitemaps
+Sitemap: https://fetecart.com/sitemap.xml
+Sitemap: https://www.fetecart.com/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1

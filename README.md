@@ -1,14 +1,20 @@
-# Fetecart
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-A small, editorial-style storefront landing page for thoughtfully selected everyday objects.
+# Run and deploy your AI Studio app
 
-## Run locally
+This contains everything you need to run your app locally.
 
-Open `index.html` in a browser, or serve this folder with any static web server.
+View your app in AI Studio: https://ai.studio/apps/4f7752e3-e577-44a0-bf29-e36e60ea1334
 
-## Deploy on Vercel
+## Run Locally
 
-1. Import this GitHub repository at [vercel.com/new](https://vercel.com/new).
-2. Select **bijubpb78-ctrl/new**.
-3. Leave the framework preset as **Other** and the build command blank.
-4. Click **Deploy**. Vercel will serve `index.html` automatically.
+**Prerequisites:**  Node.js
+
+
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

@@ -1,0 +1,59 @@
+[
+  {
+    "id": "cj-hook-1789884406119-nkpv",
+    "receivedAt": "2026-09-20T06:06:46.119Z",
+    "topic": "LOGISTICS_TRACKING",
+    "clientOrderId": "FTC-89421",
+    "cjOrderId": "CJ20260918001928",
+    "trackingNumber": "FTC89421034US",
+    "carrier": "USPS Ground Advantage",
+    "statusText": "DELIVERING",
+    "matchedOrder": "FTC-89421 (In Transit)",
+    "headers": {
+      "content-type": "application/json",
+      "user-agent": "curl/7.88.1",
+      "cj-sign": "test_signature"
+    },
+    "payload": {
+      "messageType": "LOGISTICS_TRACKING",
+      "topic": "logistics",
+      "params": {
+        "orderId": "CJ20260918001928",
+        "clientOrderId": "FTC-89421",
+        "trackingNumber": "FTC89421034US",
+        "logisticName": "USPS Ground Advantage",
+        "trackStatus": "DELIVERING"
+      }
+    },
+    "responseStatus": 200
+  },
+  {
+    "id": "cj-log-init-01",
+    "receivedAt": "2026-09-20T03:06:42.067Z",
+    "topic": "LOGISTICS_TRACKING",
+    "clientOrderId": "FTC-89421",
+    "cjOrderId": "CJ20260918001928",
+    "trackingNumber": "FTC89421034US",
+    "carrier": "USPS Ground Advantage",
+    "statusText": "Dispatched from US West Atelier Hub",
+    "matchedOrder": "FTC-89421",
+    "headers": {
+      "content-type": "application/json",
+      "user-agent": "CJ-OpenPlatform-Webhook/2.0",
+      "cj-sign": "sha256_mock_verified"
+    },
+    "payload": {
+      "messageType": "LOGISTICS_TRACKING",
+      "topic": "logistics",
+      "params": {
+        "orderId": "CJ20260918001928",
+        "clientOrderId": "FTC-89421",
+        "trackingNumber": "FTC89421034US",
+        "logisticName": "USPS Ground Advantage",
+        "trackStatus": "DELIVERING",
+        "deliveryTime": "2026-09-20T06:06:42.067Z"
+      }
+    },
+    "responseStatus": 200
+  }
+]

@@ -1,0 +1,460 @@
+[
+  {
+    "orderId": "FTC-76195",
+    "clientOrderId": "FTC-76195",
+    "trackingNumber": "FTC93670232US",
+    "carrierName": "USPS Priority / CJ Logistics",
+    "items": [
+      {
+        "productName": "Studio Reformer",
+        "price": 1200,
+        "quantity": 1
+      }
+    ],
+    "subtotal": 1200,
+    "shippingCost": 0,
+    "total": 1200,
+    "currency": "USD",
+    "shippingAddress": {
+      "fullName": "Valued Customer",
+      "email": "",
+      "addressLine1": "",
+      "city": "",
+      "stateOrProvince": "",
+      "postalCode": "",
+      "country": "USD",
+      "phone": ""
+    },
+    "paymentMethod": "Stripe Hosted Checkout",
+    "stripeSessionId": "cs_live_a1ma6gC006tgTPCWhTNQqXRwNZVozRdrA4sS41k2r5PX1IUHy44GaTemMY",
+    "status": "Processing",
+    "createdAt": "Sep 21, 2026",
+    "estimatedDelivery": "3-5 Business Days",
+    "webhookUpdates": [
+      {
+        "timestamp": "2026-09-21T03:20:47.251Z",
+        "topic": "ORDER_INITIATED",
+        "message": "Stripe Hosted Checkout session created (cs_live_a1ma6gC006tgTPCWhTNQqXRwNZVozRdrA4sS41k2r5PX1IUHy44GaTemMY). Awaiting customer payment."
+      }
+    ],
+    "updatedAt": "2026-09-21T03:20:47.251Z"
+  },
+  {
+    "orderId": "FTC-22958",
+    "clientOrderId": "FTC-22958",
+    "trackingNumber": "FTC25903923US",
+    "carrierName": "USPS Priority / CJ Logistics",
+    "items": [
+      {
+        "productName": "Non-Slip Studio Grip Socks (Onyx Black)",
+        "price": 14,
+        "quantity": 1,
+        "sku": "CJNSFSWZ00542-Black",
+        "product": {
+          "name": "Non-Slip Studio Grip Socks (Onyx Black)",
+          "basePriceUSD": 14,
+          "images": [],
+          "sku": "CJNSFSWZ00542-Black"
+        }
+      }
+    ],
+    "subtotal": 14,
+    "shippingCost": 0,
+    "total": 14,
+    "currency": "USD",
+    "shippingAddress": {
+      "fullName": "Valued Customer",
+      "email": "",
+      "addressLine1": "",
+      "city": "",
+      "stateOrProvince": "",
+      "postalCode": "",
+      "country": "USD",
+      "phone": ""
+    },
+    "paymentMethod": "Stripe Hosted Checkout",
+    "stripeSessionId": "cs_live_a1dSnW2XCUxBsbhYxo8yBdDoy4fFPq57Xfu2luzbAbS7CtUJ4L2ueY0xli",
+    "status": "Processing",
+    "createdAt": "Sep 21, 2026",
+    "estimatedDelivery": "3-5 Business Days",
+    "webhookUpdates": [
+      {
+        "timestamp": "2026-09-21T03:15:38.115Z",
+        "topic": "ORDER_INITIATED",
+        "message": "Stripe Hosted Checkout session created (cs_live_a1dSnW2XCUxBsbhYxo8yBdDoy4fFPq57Xfu2luzbAbS7CtUJ4L2ueY0xli). Awaiting customer payment."
+      }
+    ],
+    "updatedAt": "2026-09-21T03:15:38.115Z"
+  },
+  {
+    "orderId": "FTC-48342",
+    "clientOrderId": "FTC-48342",
+    "trackingNumber": "FTC50200588US",
+    "carrierName": "USPS Priority / CJ Logistics",
+    "items": [
+      {
+        "productName": "Non-Slip Studio Grip Socks (Onyx Black)",
+        "price": 14,
+        "quantity": 1,
+        "sku": "CJNSFSWZ00542-Black",
+        "product": {
+          "name": "Non-Slip Studio Grip Socks (Onyx Black)",
+          "basePriceUSD": 14,
+          "images": [],
+          "sku": "CJNSFSWZ00542-Black"
+        }
+      }
+    ],
+    "subtotal": 14,
+    "shippingCost": 0,
+    "total": 14,
+    "currency": "USD",
+    "shippingAddress": {
+      "fullName": "Valued Customer",
+      "email": "",
+      "addressLine1": "",
+      "city": "",
+      "stateOrProvince": "",
+      "postalCode": "",
+      "country": "USD",
+      "phone": ""
+    },
+    "paymentMethod": "Stripe Hosted Checkout",
+    "stripeSessionId": "cs_live_a1LXOOBnQxfj1ZfBko3ahSICKmSpJOa52Gfp4FASClaTg6cIlNL49UjSi1",
+    "status": "Processing",
+    "createdAt": "Sep 21, 2026",
+    "estimatedDelivery": "3-5 Business Days",
+    "webhookUpdates": [
+      {
+        "timestamp": "2026-09-21T03:12:02.351Z",
+        "topic": "ORDER_INITIATED",
+        "message": "Stripe Hosted Checkout session created (cs_live_a1LXOOBnQxfj1ZfBko3ahSICKmSpJOa52Gfp4FASClaTg6cIlNL49UjSi1). Awaiting customer payment."
+      }
+    ],
+    "updatedAt": "2026-09-21T03:12:02.351Z"
+  },
+  {
+    "orderId": "FTC-24106",
+    "clientOrderId": "FTC-24106",
+    "trackingNumber": "FTC24341315US",
+    "carrierName": "USPS Priority / CJ Logistics",
+    "items": [
+      {
+        "productName": "Non-Slip Studio Grip Socks (Onyx Black)",
+        "price": 14,
+        "quantity": 1,
+        "sku": "CJNSFSWZ00542-Black",
+        "product": {
+          "name": "Non-Slip Studio Grip Socks (Onyx Black)",
+          "basePriceUSD": 14,
+          "images": [
+            "/images/black_pilates_grip_socks_1789747685725.jpg",
+            "/images/black_grip_socks_worn_1789747700802.jpg"
+          ],
+          "sku": "CJNSFSWZ00542-Black"
+        }
+      }
+    ],
+    "subtotal": 14,
+    "shippingCost": 0,
+    "total": 14,
+    "currency": "USD",
+    "shippingAddress": {
+      "fullName": "Valued Customer",
+      "email": "",
+      "addressLine1": "",
+      "city": "",
+      "stateOrProvince": "",
+      "postalCode": "",
+      "country": "USD",
+      "phone": ""
+    },
+    "paymentMethod": "Stripe Hosted Checkout",
+    "stripeSessionId": "cs_live_a1AY0ORke4Y3vN1lOrZqufzE1VDnhbttyAGaQPbTZWVDTBXAevnrSKr4h7",
+    "status": "Processing",
+    "createdAt": "Sep 21, 2026",
+    "estimatedDelivery": "3-5 Business Days",
+    "webhookUpdates": [
+      {
+        "timestamp": "2026-09-21T03:11:31.082Z",
+        "topic": "ORDER_INITIATED",
+        "message": "Stripe Hosted Checkout session created (cs_live_a1AY0ORke4Y3vN1lOrZqufzE1VDnhbttyAGaQPbTZWVDTBXAevnrSKr4h7). Awaiting customer payment."
+      }
+    ],
+    "updatedAt": "2026-09-21T03:11:31.082Z"
+  },
+  {
+    "orderId": "FTC-47339",
+    "clientOrderId": "FTC-47339",
+    "trackingNumber": "FTC79235773US",
+    "carrierName": "USPS Priority / CJ Logistics",
+    "items": [
+      {
+        "productName": "Portable Pilates Bar",
+        "price": 49,
+        "quantity": 1,
+        "product": {
+          "images": [
+            "/images/portable_bar.jpg"
+          ]
+        }
+      }
+    ],
+    "subtotal": 49,
+    "shippingCost": 0,
+    "total": 49,
+    "currency": "USD",
+    "shippingAddress": {
+      "fullName": "Valued Customer",
+      "email": "",
+      "addressLine1": "",
+      "city": "",
+      "stateOrProvince": "",
+      "postalCode": "",
+      "country": "USD",
+      "phone": ""
+    },
+    "paymentMethod": "Stripe Hosted Checkout",
+    "stripeSessionId": "cs_live_a1aZ7jrdZ7r8eTK9SH5tBC3VCYVNZTcqmmqsGzaRmc1aPGIkPZoOCyDyV5",
+    "status": "Processing",
+    "createdAt": "Sep 21, 2026",
+    "estimatedDelivery": "3-5 Business Days",
+    "webhookUpdates": [
+      {
+        "timestamp": "2026-09-21T03:11:15.851Z",
+        "topic": "ORDER_INITIATED",
+        "message": "Stripe Hosted Checkout session created (cs_live_a1aZ7jrdZ7r8eTK9SH5tBC3VCYVNZTcqmmqsGzaRmc1aPGIkPZoOCyDyV5). Awaiting customer payment."
+      }
+    ],
+    "updatedAt": "2026-09-21T03:11:15.852Z"
+  },
+  {
+    "orderId": "FTC-48672",
+    "clientOrderId": "FTC-48672",
+    "trackingNumber": "FTC53821603US",
+    "carrierName": "USPS Priority / CJ Logistics",
+    "items": [
+      {
+        "productName": "The Foldable Studio Home Pilates Reformer",
+        "price": 263.99,
+        "quantity": 1,
+        "product": {
+          "images": [
+            "/images/reformer_hd_studio_1789750074969.jpg",
+            "https://cf.cjdropshipping.com/fc7f0310-aee1-4abf-94db-89d20dd7e350.png"
+          ]
+        }
+      }
+    ],
+    "subtotal": 263.99,
+    "shippingCost": 0,
+    "total": 263.99,
+    "currency": "USD",
+    "shippingAddress": {
+      "fullName": "Valued Customer",
+      "email": "",
+      "addressLine1": "",
+      "city": "",
+      "stateOrProvince": "",
+      "postalCode": "",
+      "country": "USD",
+      "phone": ""
+    },
+    "paymentMethod": "Stripe Hosted Checkout",
+    "stripeSessionId": "cs_live_a11gJMBuH9yTzPzAFZiwY6NlcVo87NIpX6pYsy4EbSP2nsEeljS3Ldafq1",
+    "status": "Processing",
+    "createdAt": "Sep 21, 2026",
+    "estimatedDelivery": "3-5 Business Days",
+    "webhookUpdates": [
+      {
+        "timestamp": "2026-09-21T03:11:13.240Z",
+        "topic": "ORDER_INITIATED",
+        "message": "Stripe Hosted Checkout session created (cs_live_a11gJMBuH9yTzPzAFZiwY6NlcVo87NIpX6pYsy4EbSP2nsEeljS3Ldafq1). Awaiting customer payment."
+      }
+    ],
+    "updatedAt": "2026-09-21T03:11:13.241Z"
+  },
+  {
+    "orderId": "FTC-77807",
+    "clientOrderId": "FTC-77807",
+    "trackingNumber": "FTC73322815US",
+    "carrierName": "USPS Priority / CJ Logistics",
+    "items": [
+      {
+        "productName": "The Foldable Studio Home Pilates Reformer",
+        "price": 263.99,
+        "quantity": 1,
+        "product": {
+          "images": [
+            "https://cf.cjdropshipping.com/fc7f0310-aee1-4abf-94db-89d20dd7e350.png"
+          ]
+        }
+      }
+    ],
+    "subtotal": 263.99,
+    "shippingCost": 0,
+    "total": 263.99,
+    "currency": "USD",
+    "shippingAddress": {
+      "fullName": "Valued Customer",
+      "email": "",
+      "addressLine1": "",
+      "city": "",
+      "stateOrProvince": "",
+      "postalCode": "",
+      "country": "USD",
+      "phone": ""
+    },
+    "paymentMethod": "Stripe Hosted Checkout",
+    "stripeSessionId": "cs_live_a1w7hIY4iQvJ0mC8QVJTNg5VtrG8OsApKEP3zv39sjpPnTIhQduo4Hft38",
+    "status": "Processing",
+    "createdAt": "Sep 21, 2026",
+    "estimatedDelivery": "3-5 Business Days",
+    "webhookUpdates": [
+      {
+        "timestamp": "2026-09-21T03:11:03.978Z",
+        "topic": "ORDER_INITIATED",
+        "message": "Stripe Hosted Checkout session created (cs_live_a1w7hIY4iQvJ0mC8QVJTNg5VtrG8OsApKEP3zv39sjpPnTIhQduo4Hft38). Awaiting customer payment."
+      }
+    ],
+    "updatedAt": "2026-09-21T03:11:03.978Z"
+  },
+  {
+    "orderId": "FTC-28322",
+    "clientOrderId": "FTC-28322",
+    "trackingNumber": "FTC55657839US",
+    "carrierName": "USPS Priority / CJ Logistics",
+    "items": [
+      {
+        "productName": "Studio Reformer",
+        "price": 1200,
+        "quantity": 1,
+        "product": {
+          "images": [
+            "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80"
+          ]
+        }
+      }
+    ],
+    "subtotal": 1200,
+    "shippingCost": 0,
+    "total": 1200,
+    "currency": "USD",
+    "shippingAddress": {
+      "fullName": "Valued Customer",
+      "email": "",
+      "addressLine1": "",
+      "city": "",
+      "stateOrProvince": "",
+      "postalCode": "",
+      "country": "USD",
+      "phone": ""
+    },
+    "paymentMethod": "Stripe Hosted Checkout",
+    "stripeSessionId": "cs_live_a1KRSNiz6aiIt3WdcvyAi4VxdqpDrnC3PZtwUrIFPEsMQcS4GvkVi44Eoi",
+    "status": "Processing",
+    "createdAt": "Sep 21, 2026",
+    "estimatedDelivery": "3-5 Business Days",
+    "webhookUpdates": [
+      {
+        "timestamp": "2026-09-21T03:10:51.405Z",
+        "topic": "ORDER_INITIATED",
+        "message": "Stripe Hosted Checkout session created (cs_live_a1KRSNiz6aiIt3WdcvyAi4VxdqpDrnC3PZtwUrIFPEsMQcS4GvkVi44Eoi). Awaiting customer payment."
+      }
+    ],
+    "updatedAt": "2026-09-21T03:10:51.405Z"
+  },
+  {
+    "orderId": "FTC-38452",
+    "clientOrderId": "FTC-38452",
+    "trackingNumber": "FTC68507350US",
+    "carrierName": "USPS Priority / CJ Logistics",
+    "items": [
+      {
+        "productName": "Studio Reformer",
+        "price": 1200,
+        "quantity": 1,
+        "sku": "FTC-REF-001"
+      }
+    ],
+    "subtotal": 1200,
+    "shippingCost": 0,
+    "total": 1200,
+    "currency": "USD",
+    "shippingAddress": {
+      "fullName": "Valued Customer",
+      "email": "",
+      "addressLine1": "",
+      "city": "",
+      "stateOrProvince": "",
+      "postalCode": "",
+      "country": "USD",
+      "phone": ""
+    },
+    "paymentMethod": "Stripe Hosted Checkout",
+    "stripeSessionId": "cs_live_a1FcQBZocBNOtSjcpVmy3iQKpsKgrrUFv8MrL8kYk5IezK3VGpgiFvNcXr",
+    "status": "Processing",
+    "createdAt": "Sep 21, 2026",
+    "estimatedDelivery": "3-5 Business Days",
+    "webhookUpdates": [
+      {
+        "timestamp": "2026-09-21T03:07:08.883Z",
+        "topic": "ORDER_INITIATED",
+        "message": "Stripe Hosted Checkout session created (cs_live_a1FcQBZocBNOtSjcpVmy3iQKpsKgrrUFv8MrL8kYk5IezK3VGpgiFvNcXr). Awaiting customer payment."
+      }
+    ],
+    "updatedAt": "2026-09-21T03:07:08.883Z"
+  },
+  {
+    "orderId": "FTC-89421",
+    "trackingNumber": "FTC89421034US",
+    "clientOrderId": "FTC-89421",
+    "cjOrderId": "CJ20260918001928",
+    "carrierName": "USPS Ground Advantage",
+    "items": [
+      {
+        "productId": "prod-allegro-reformer",
+        "productName": "AeroClassic Commercial Studio Reformer",
+        "sku": "FTC-PLT-REF-01",
+        "quantity": 1,
+        "price": 2450
+      }
+    ],
+    "subtotal": 2450,
+    "shippingCost": 0,
+    "total": 2450,
+    "currency": "USD",
+    "shippingAddress": {
+      "fullName": "Sarah Jenkins",
+      "email": "sarah.jenkins@pilatesstudio.com",
+      "addressLine1": "742 Evergreen Terrace",
+      "city": "Springfield",
+      "stateOrProvince": "OR",
+      "postalCode": "97477",
+      "country": "United States",
+      "phone": "+1 (541) 555-0199"
+    },
+    "paymentMethod": "stripe",
+    "status": "In Transit",
+    "createdAt": "Sep 18, 2026",
+    "estimatedDelivery": "Sep 24, 2026",
+    "webhookUpdates": [
+      {
+        "timestamp": "2026-09-19T06:06:42.066Z",
+        "topic": "ORDER_STATUS",
+        "message": "Order confirmed and allocated in US West Hub by CJ Dropshipping"
+      },
+      {
+        "timestamp": "2026-09-19T18:06:42.067Z",
+        "topic": "LOGISTICS_TRACKING",
+        "message": "Dispatch scan completed by USPS. Tracking number FTC89421034US issued."
+      },
+      {
+        "timestamp": "2026-09-20T06:06:46.119Z",
+        "topic": "LOGISTICS_TRACKING",
+        "message": "CJ Webhook: DELIVERING for FTC-89421"
+      }
+    ],
+    "updatedAt": "2026-09-20T06:06:46.119Z"
+  }
+]
