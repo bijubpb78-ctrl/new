@@ -24,6 +24,7 @@ import { Footer } from './components/Footer';
 import { InfoPolicyModal, PolicyTab } from './components/InfoPolicyModal';
 import { ShareProductModal } from './components/ShareProductModal';
 import { PaymentBadges } from './components/PaymentBadges';
+import { AdminOperationsPage } from './components/AdminOperationsPage';
 import { getStoredProducts, subscribeToProductChanges } from './utils/productStore';
 import { 
   Filter, 
@@ -44,6 +45,9 @@ import {
 } from 'lucide-react';
 
 export default function App() {
+  if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
+    return <AdminOperationsPage />;
+  }
   // Region & Currency
   const [currency, setCurrency] = useState<CurrencyCode>(detectDefaultCurrency);
 
@@ -55,6 +59,23 @@ export default function App() {
       setProducts(updated);
     });
     return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then(response => response.ok ? response.json() : { overrides: [] })
+      .then(data => {
+        if (!Array.isArray(data.overrides)) return;
+        setProducts(current => {
+          const map = new Map(current.map(product => [product.id, product]));
+          data.overrides.forEach((row: { id: string; data?: string; deleted?: number }) => {
+            if (row.deleted) map.delete(row.id);
+            else if (row.data) { try { map.set(row.id, JSON.parse(row.data)); } catch {} }
+          });
+          return [...map.values()];
+        });
+      })
+      .catch(() => {});
   }, []);
 
   // Cart state

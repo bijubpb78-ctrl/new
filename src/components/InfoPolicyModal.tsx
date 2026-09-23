@@ -56,6 +56,7 @@ export const InfoPolicyModal: React.FC<InfoPolicyModalProps> = ({
   const [contactSubmitted, setContactSubmitted] = useState(false);
   const [ticketId, setTicketId] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [contactError, setContactError] = useState('');
   const [routedEmail, setRoutedEmail] = useState('contact@fetecart.com');
 
   if (!isOpen) return null;
@@ -85,6 +86,7 @@ export const InfoPolicyModal: React.FC<InfoPolicyModalProps> = ({
     if (!contactName.trim() || !contactEmail.trim() || !contactMessage.trim()) return;
 
     setIsSending(true);
+    setContactError('');
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
@@ -99,21 +101,18 @@ export const InfoPolicyModal: React.FC<InfoPolicyModalProps> = ({
       });
 
       const data = await response.json();
+      if (!response.ok || !data?.ticketId) {
+        throw new Error(data?.error || 'Unable to submit your enquiry.');
+      }
       if (data && data.ticketId) {
         setTicketId(data.ticketId);
         if (data.recipient) {
           setRoutedEmail(data.recipient);
         }
-      } else {
-        const generatedTicket = `FTC-TCK-${Math.floor(100000 + Math.random() * 900000)}`;
-        setTicketId(generatedTicket);
       }
       setContactSubmitted(true);
     } catch (err) {
-      console.warn('Contact API notice, proceeding with confirmation:', err);
-      const generatedTicket = `FTC-TCK-${Math.floor(100000 + Math.random() * 900000)}`;
-      setTicketId(generatedTicket);
-      setContactSubmitted(true);
+      setContactError(err instanceof Error ? err.message : 'Unable to submit your enquiry. Please email contact@fetecart.com.');
     } finally {
       setIsSending(false);
     }
@@ -125,6 +124,7 @@ export const InfoPolicyModal: React.FC<InfoPolicyModalProps> = ({
     setContactEmail('');
     setContactPhone('');
     setContactMessage('');
+    setContactError('');
   };
 
   const currencyConfig = CURRENCY_CONFIGS[currentCurrency];
@@ -551,6 +551,7 @@ export const InfoPolicyModal: React.FC<InfoPolicyModalProps> = ({
                           </>
                         )}
                       </button>
+                      {contactError && <p role="alert" className="text-red-400 text-xs">{contactError}</p>}
                     </form>
                   )}
                 </div>

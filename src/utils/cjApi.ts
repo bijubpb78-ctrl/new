@@ -5,7 +5,8 @@
  */
 
 const CJ_API_BASE = 'https://developers.cjdropshipping.com/api2.0/v1';
-export const DEFAULT_CJ_API_KEY = 'CJ5837386@api@9a1fe30997464b6c99a73b521dbef97c';
+// CJ credentials belong in the server environment and must never ship to browsers.
+export const DEFAULT_CJ_API_KEY = '';
 
 const STORAGE_KEYS = {
   API_KEY: 'fetecart_cj_api_key',

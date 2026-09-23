@@ -12,6 +12,11 @@ type VerifiedOrder = {
   status: string;
   confirmedAt: string;
   message: string;
+  trackingNumber?: string | null;
+  carrier?: string | null;
+  trackingUrl?: string | null;
+  updatedAt?: string | null;
+  events?: Array<{ statusDesc?: string; activity?: string; location?: string; eventTime?: string }>;
 };
 
 export const CjTrackingModal: React.FC<CjTrackingModalProps> = ({ isOpen, onClose, initialTracking = '' }) => {
@@ -102,6 +107,23 @@ export const CjTrackingModal: React.FC<CjTrackingModalProps> = ({ isOpen, onClos
               <div className="border-t border-stone-800 pt-4 text-sm text-stone-300 space-y-1">
                 <p>{order.message}</p>
                 <p className="text-xs text-stone-500">Payment confirmed: {order.confirmedAt}</p>
+                {order.trackingNumber && (
+                  <div className="pt-3 grid sm:grid-cols-2 gap-3">
+                    <div><div className="text-[10px] uppercase text-stone-500">Carrier</div><div className="font-semibold">{order.carrier || 'Shipping partner'}</div></div>
+                    <div><div className="text-[10px] uppercase text-stone-500">Tracking number</div><div className="font-mono text-amber-400">{order.trackingNumber}</div></div>
+                  </div>
+                )}
+                {order.trackingUrl && <a href={order.trackingUrl} target="_blank" rel="noreferrer" className="inline-block pt-2 text-amber-400 hover:underline">Open carrier tracking</a>}
+                {order.events && order.events.length > 0 && (
+                  <div className="pt-3 space-y-2">
+                    {order.events.slice(0, 8).map((event, index) => (
+                      <div key={`${event.eventTime || index}`} className="border-l-2 border-amber-500/50 pl-3 py-1">
+                        <div className="font-semibold text-xs">{event.statusDesc || event.activity || 'Shipment update'}</div>
+                        <div className="text-[11px] text-stone-500">{[event.location, event.eventTime].filter(Boolean).join(' · ')}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
