@@ -22,7 +22,6 @@ import { CartDrawer } from './components/CartDrawer';
 import { CjTrackingModal } from './components/CjTrackingModal';
 import { Footer } from './components/Footer';
 import { InfoPolicyModal, PolicyTab } from './components/InfoPolicyModal';
-import { AdminPortalModal } from './components/AdminPortalModal';
 import { ShareProductModal } from './components/ShareProductModal';
 import { PaymentBadges } from './components/PaymentBadges';
 import { getStoredProducts, subscribeToProductChanges } from './utils/productStore';
@@ -89,7 +88,6 @@ export default function App() {
   const [initialTrackingCode, setInitialTrackingCode] = useState('');
   const [policyModalOpen, setPolicyModalOpen] = useState(false);
   const [policyModalTab, setPolicyModalTab] = useState<PolicyTab>('about');
-  const [adminPortalOpen, setAdminPortalOpen] = useState(false);
   const [stripeCheckoutError, setStripeCheckoutError] = useState<string | null>(null);
   const [checkoutMode, setCheckoutMode] = useState<'unavailable' | 'test' | 'live'>('unavailable');
 
@@ -796,18 +794,7 @@ export default function App() {
           el?.scrollIntoView({ behavior: 'smooth' });
         }}
         onOpenPolicy={handleOpenPolicy}
-        onOpenAdmin={() => setAdminPortalOpen(true)}
       />
-
-      {/* Discreet low-visibility downside corner trigger for Store Owner */}
-      <button
-        onClick={() => setAdminPortalOpen(true)}
-        className="fixed bottom-2 right-2 z-40 p-1.5 rounded-full bg-stone-900/30 hover:bg-stone-900 text-stone-600 hover:text-stone-300 opacity-20 hover:opacity-100 transition-all cursor-pointer border border-transparent hover:border-stone-800"
-        title="Atelier Management Portal"
-        aria-label="Atelier Staff Portal"
-      >
-        <Lock className="w-3 h-3" />
-      </button>
 
       {/* Product Detail Page Modal */}
       {activeProductModal && (
@@ -991,13 +978,6 @@ export default function App() {
         onClose={() => setPolicyModalOpen(false)}
         onTabChange={setPolicyModalTab}
         currentCurrency={currency}
-      />
-
-      {/* Password-Gated Admin Management Portal (Products, Stock, Add/Delete, CJ & Domain) */}
-      <AdminPortalModal
-        isOpen={adminPortalOpen}
-        onClose={() => setAdminPortalOpen(false)}
-        onProductsUpdated={(updated) => setProducts(updated)}
       />
 
       {/* Social Media Share Product Modal */}

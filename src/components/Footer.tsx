@@ -14,8 +14,7 @@ import {
   Share2,
   Copy,
   Check,
-  Building,
-  Lock
+  Building
 } from 'lucide-react';
 import { CurrencyCode } from '../types';
 import { CURRENCY_CONFIGS } from '../utils/currency';
@@ -27,7 +26,6 @@ interface FooterProps {
   onOpenTracking: () => void;
   onSelectCategory: (category: string) => void;
   onOpenPolicy: (tab: PolicyTab) => void;
-  onOpenAdmin?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
@@ -36,7 +34,6 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenTracking,
   onSelectCategory,
   onOpenPolicy,
-  onOpenAdmin,
 }) => {
   const [copiedPhone, setCopiedPhone] = useState(false);
 
@@ -498,19 +495,6 @@ export const Footer: React.FC<FooterProps> = ({
             <button onClick={() => onOpenPolicy('share')} className="hover:text-amber-400 cursor-pointer">
               Social Sharing
             </button>
-            {onOpenAdmin && (
-              <>
-                <span>•</span>
-                <button 
-                  onClick={onOpenAdmin} 
-                  className="opacity-20 hover:opacity-90 transition-opacity text-stone-600 hover:text-stone-300 inline-flex items-center gap-1 cursor-pointer text-[10px]"
-                  title="Atelier Portal"
-                >
-                  <Lock className="w-2.5 h-2.5" />
-                  <span>Portal</span>
-                </button>
-              </>
-            )}
           </div>
         </div>
 
@@ -518,4 +502,3 @@ export const Footer: React.FC<FooterProps> = ({
     </footer>
   );
 };
-
