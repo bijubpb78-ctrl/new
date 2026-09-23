@@ -279,8 +279,14 @@ export default function App() {
 
   // Cart operations
   const handleAddToCart = (product: Product, quantity = 1) => {
+    const available = product.warehouses.reduce((sum, warehouse) => sum + Math.max(0, warehouse.stock || 0), 0);
+    if (available < quantity) {
+      showToast('This product is currently out of stock.');
+      return;
+    }
     setCartItems(prev => {
       const existing = prev.find(item => item.product.id === product.id);
+      if (existing && existing.quantity + quantity > available) return prev;
       if (existing) {
         return prev.map(item =>
           item.product.id === product.id
@@ -298,11 +304,11 @@ export default function App() {
       handleRemoveItem(productId);
       return;
     }
-    setCartItems(prev =>
-      prev.map(item =>
-        item.product.id === productId ? { ...item, quantity } : item
-      )
-    );
+    setCartItems(prev => prev.map(item => {
+      if (item.product.id !== productId) return item;
+      const available = item.product.warehouses.reduce((sum, warehouse) => sum + Math.max(0, warehouse.stock || 0), 0);
+      return { ...item, quantity: Math.min(quantity, available) };
+    }));
   };
 
   const handleRemoveItem = (productId: string) => {

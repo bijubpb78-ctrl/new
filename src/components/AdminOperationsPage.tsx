@@ -66,7 +66,11 @@ export const AdminOperationsPage: React.FC = () => {
       name: item.name || '', subtitle: item.categoryName || item.name || '', description: item.description || '',
       basePriceUSD: Number(item.suggestedPriceUSD || 0), compareAtPriceUSD: item.suggestedPriceUSD ? Number((item.suggestedPriceUSD * 1.25).toFixed(2)) : undefined,
       weightKg: Number(item.weightKg || 0), dimensions: item.dimensions || '', material: item.material || '',
-      images: Array.isArray(item.images) ? item.images : [] });
+      images: Array.isArray(item.images) ? item.images : [],
+      warehouses: Array.isArray(item.warehouses) && item.warehouses.length
+        ? item.warehouses
+        : [{ warehouse: 'CJ inventory unavailable', stock: 0, dispatchHours: 72 }] });
+    setCjMessage(`Product loaded with ${Number(item.totalStock || 0)} units reported by CJ.`);
   };
   const connectCj = async () => {
     setError(''); setCjMessage('Connecting…');

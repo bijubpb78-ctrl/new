@@ -29,6 +29,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const [addedAnim, setAddedAnim] = useState(false);
   const currencyConfig = CURRENCY_CONFIGS[currentCurrency];
+  const totalStock = product.warehouses.reduce((sum, warehouse) => sum + Math.max(0, warehouse.stock || 0), 0);
 
   // Calculate total regional stock or localized warehouse stock
   const primaryWarehouse = product.warehouses.find(w => {
@@ -40,6 +41,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (totalStock < 1) return;
     onAddToCart(product);
     setAddedAnim(true);
     setTimeout(() => setAddedAnim(false), 1500);
@@ -138,7 +140,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <div className="flex items-center gap-1.5 text-[11px] text-stone-300 bg-[#1c1c1a] px-2.5 py-1.5 rounded-xl border border-stone-800">
             <Building2 className="w-3 h-3 text-amber-400 shrink-0" />
             <span className="truncate">
-              {primaryWarehouse.stock <= 10 ? (
+              {totalStock < 1 ? (
+                <span className="text-red-400 font-medium">Out of stock</span>
+              ) : primaryWarehouse.stock <= 10 ? (
                 <span className="text-amber-400 font-medium">
                   Only {primaryWarehouse.stock} units left in {primaryWarehouse.warehouse}
                 </span>
@@ -184,14 +188,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             {/* Add to Bag Button */}
             <button
               onClick={handleAdd}
+              disabled={totalStock < 1}
               id={`add-to-cart-${product.id}`}
               className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs ${
-                addedAnim
+                totalStock < 1
+                  ? 'bg-stone-800 text-stone-500 cursor-not-allowed'
+                  : addedAnim
                   ? 'bg-emerald-500 text-stone-950'
                   : 'bg-amber-500 hover:bg-amber-400 text-stone-950 active:scale-95'
               }`}
             >
-              {addedAnim ? (
+              {totalStock < 1 ? <span>Out of stock</span> : addedAnim ? (
                 <>
                   <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                   <span>Added</span>

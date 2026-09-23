@@ -63,6 +63,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
   const [copiedLink, setCopiedLink] = useState(false);
 
   const currencyConfig = CURRENCY_CONFIGS[currentCurrency];
+  const totalStock = product.warehouses.reduce((sum, warehouse) => sum + Math.max(0, warehouse.stock || 0), 0);
   const analytics = getProductReviewAnalytics(product);
 
   const baseUrl = typeof window !== 'undefined' && window.location.hostname.includes('fetecart.com')
@@ -291,17 +292,19 @@ export const ProductModal: React.FC<ProductModalProps> = ({
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => onAddToCart(product, quantity)}
+                  disabled={totalStock < quantity}
                   id="modal-add-to-cart-btn"
-                  className="flex-1 py-3 px-5 rounded-xl bg-stone-800 hover:bg-stone-700 border border-stone-700 text-white text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-md active:scale-98 cursor-pointer"
+                  className="flex-1 py-3 px-5 rounded-xl bg-stone-800 hover:bg-stone-700 border border-stone-700 text-white text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-md active:scale-98 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ShoppingBag className="w-4 h-4 text-amber-400" />
-                  <span>Add to Bag ({formatLocalAmount(product.basePriceUSD * quantity, currentCurrency)})</span>
+                  <span>{totalStock < quantity ? 'Out of stock' : `Add to Bag (${formatLocalAmount(product.basePriceUSD * quantity, currentCurrency)})`}</span>
                 </button>
 
                 <button
                   onClick={() => onBuyNow(product, quantity)}
+                  disabled={totalStock < quantity}
                   id="modal-buy-now-btn"
-                  className="py-3 px-6 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-sm font-bold transition-all shadow-lg active:scale-98 cursor-pointer"
+                  className="py-3 px-6 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-sm font-bold transition-all shadow-lg active:scale-98 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Buy Now with Stripe
                 </button>

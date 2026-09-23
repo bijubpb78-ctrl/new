@@ -43,6 +43,12 @@ export async function createCheckoutSession(request: Request, stripeKey?: string
     if (!product || !Number.isInteger(quantity) || quantity < 1 || quantity > 20) {
       return json({ success: false, error: 'Cart contains an invalid product or quantity.' }, 400);
     }
+    const availableStock = Array.isArray(product.warehouses)
+      ? product.warehouses.reduce((sum: number, warehouse: { stock?: number }) => sum + Math.max(0, Number(warehouse.stock || 0)), 0)
+      : 0;
+    if (availableStock < quantity) {
+      return json({ success: false, error: `${product.name} does not have enough stock for this order.` }, 409);
+    }
     // Only server-side catalog prices are used. Browser-supplied prices are ignored.
     const amount = Math.round(product.basePriceUSD * rate * 100);
     fields.set(`line_items[${index}][price_data][currency]`, currency.toLowerCase());

@@ -48,6 +48,25 @@ export async function onRequestGet({ request, env }: Context) {
       ...variants.map((item: any) => item.variantImage),
     ].filter(Boolean))];
     const firstVariant = variants[0] || {};
+    const inventoryResponse = await fetch(`https://developers.cjdropshipping.com/api2.0/v1/product/stock/queryBySku?sku=${encodeURIComponent(sku)}`, {
+      headers: { 'CJ-Access-Token': token },
+    });
+    const inventoryData = await inventoryResponse.json() as any;
+    const rawInventories = Array.isArray(inventoryData?.data)
+      ? inventoryData.data
+      : inventoryData?.data?.inventories || inventoryData?.data?.inventoryList || [];
+    const warehouses = rawInventories.map((entry: any) => {
+      const nestedStock = Array.isArray(entry.stock)
+        ? entry.stock.reduce((sum: number, item: any) => sum + Number(item.inventory || 0) + Number(item.factoryInventory || 0), 0)
+        : 0;
+      const stock = Number(entry.totalInventoryNum ?? entry.totalInventory ?? entry.storageNum ?? entry.inventory ?? entry.cjInventoryNum ?? entry.cjInventory ?? 0)
+        || nestedStock;
+      return {
+        warehouse: entry.areaEn || entry.warehouseName || entry.storageName || `${entry.countryCode || 'CJ'} Warehouse`,
+        stock: Math.max(0, Math.floor(stock)),
+        dispatchHours: entry.countryCode === 'CN' ? 72 : 24,
+      };
+    }).filter((entry: any) => entry.warehouse && entry.stock > 0);
     const stripHtml = (value: unknown) => String(value || '').replace(/<style[\s\S]*?<\/style>/gi, ' ').replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
     return json({ success: true, product: {
       id: product.pid,
@@ -61,6 +80,8 @@ export async function onRequestGet({ request, env }: Context) {
         : '',
       material: product.materialNameEn || product.materialName || '',
       categoryName: product.categoryName || '',
+      warehouses,
+      totalStock: warehouses.reduce((sum: number, entry: any) => sum + entry.stock, 0),
       cjCostUSD: Number.isFinite(cjCost) ? cjCost : 0,
       suggestedPriceUSD: Number.isFinite(suggestedPrice) ? suggestedPrice : 0,
       variants: variants.map((item: any) => ({
