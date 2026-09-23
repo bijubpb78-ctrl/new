@@ -1,11 +1,12 @@
 import { PILATES_PRODUCTS } from '../src/data/products';
 import { CURRENCY_CONFIGS } from '../src/utils/currency';
+import { D1Database, ensureSchema } from './cloudflareStore';
 
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 
-export async function createCheckoutSession(request: Request, stripeKey?: string): Promise<Response> {
+export async function createCheckoutSession(request: Request, stripeKey?: string, db?: D1Database): Promise<Response> {
   if (!stripeKey || !/^sk_(test|live)_/.test(stripeKey)) return json({ success: false, error: 'Stripe secret key is missing or invalid in Vercel settings. Add STRIPE_SECRET_KEY and redeploy.' }, 503);
 
   let body: { items?: { sku?: string; quantity?: number }[]; currency?: string };
@@ -23,9 +24,21 @@ export async function createCheckoutSession(request: Request, stripeKey?: string
   const rate = CURRENCY_CONFIGS[currency as keyof typeof CURRENCY_CONFIGS].rate;
   const fields = new URLSearchParams();
   const orderId = `FTC-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+  const catalog = new Map(PILATES_PRODUCTS.map(product => [product.id, product]));
+  if (db) {
+    await ensureSchema(db);
+    const rows = await db.prepare('SELECT id, data, deleted FROM product_overrides').all<{ id: string; data?: string; deleted?: number }>();
+    for (const row of rows.results || []) {
+      if (row.deleted) catalog.delete(row.id);
+      else if (row.data) {
+        try { catalog.set(row.id, JSON.parse(row.data)); } catch { /* Ignore corrupt admin rows. */ }
+      }
+    }
+  }
+  const products = [...catalog.values()];
 
   for (const [index, item] of body.items.entries()) {
-    const product = item && PILATES_PRODUCTS.find((p) => p.sku === item.sku);
+    const product = item && products.find((p) => p.sku === item.sku);
     const quantity = Number(item?.quantity);
     if (!product || !Number.isInteger(quantity) || quantity < 1 || quantity > 20) {
       return json({ success: false, error: 'Cart contains an invalid product or quantity.' }, 400);
