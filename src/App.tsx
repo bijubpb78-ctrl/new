@@ -86,7 +86,7 @@ export default function App() {
   const [stripeCheckoutLoading, setStripeCheckoutLoading] = useState(false);
   const [checkoutItems, setCheckoutItems] = useState<CartItem[]>([]);
   const [trackingModalOpen, setTrackingModalOpen] = useState(false);
-  const [initialTrackingCode, setInitialTrackingCode] = useState('FTC89421034US');
+  const [initialTrackingCode, setInitialTrackingCode] = useState('');
   const [policyModalOpen, setPolicyModalOpen] = useState(false);
   const [policyModalTab, setPolicyModalTab] = useState<PolicyTab>('about');
   const [adminPortalOpen, setAdminPortalOpen] = useState(false);
@@ -134,10 +134,7 @@ export default function App() {
                 ? `Test payment completed. No money was charged. Order ${data.order.orderId}.`
                 : `Stripe payment verified. Order ${data.order.orderId} is confirmed.`
             );
-            if (data.order.trackingNumber) {
-              setInitialTrackingCode(data.order.trackingNumber);
-              setTrackingModalOpen(true);
-            }
+            if (data.order.orderId) setInitialTrackingCode(data.order.orderId);
           } else {
             setToastMessage(data.error || 'Unable to confirm Stripe payment status');
           }

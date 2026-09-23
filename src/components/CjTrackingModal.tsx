@@ -1,19 +1,5 @@
-import React, { useState } from 'react';
-import { 
-  X, 
-  Truck, 
-  Search, 
-  CheckCircle2, 
-  Clock, 
-  MapPin, 
-  Package, 
-  ShieldCheck, 
-  Plane, 
-  Building2,
-  Headphones
-} from 'lucide-react';
-import { getMockTrackingEvents } from '../utils/cjShipping';
-import { TrackingStep } from '../types';
+import React, { useEffect, useState } from 'react';
+import { CheckCircle2, Headphones, Package, Search, ShieldCheck, X } from 'lucide-react';
 
 interface CjTrackingModalProps {
   isOpen: boolean;
@@ -21,202 +7,116 @@ interface CjTrackingModalProps {
   initialTracking?: string;
 }
 
-export const CjTrackingModal: React.FC<CjTrackingModalProps> = ({
-  isOpen,
-  onClose,
-  initialTracking = 'FTC89421034US',
-}) => {
-  const [trackingNumber, setTrackingNumber] = useState(initialTracking);
-  const [activeTracking, setActiveTracking] = useState(initialTracking);
+type VerifiedOrder = {
+  orderId: string;
+  status: string;
+  confirmedAt: string;
+  message: string;
+};
+
+export const CjTrackingModal: React.FC<CjTrackingModalProps> = ({ isOpen, onClose, initialTracking = '' }) => {
+  const [identifier, setIdentifier] = useState(initialTracking);
+  const [order, setOrder] = useState<VerifiedOrder | null>(null);
+  const [error, setError] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) setIdentifier(initialTracking);
+  }, [initialTracking, isOpen]);
 
   if (!isOpen) return null;
 
-  const trackingData = getMockTrackingEvents(activeTracking);
+  const handleSearch = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const cleanIdentifier = identifier.trim().toUpperCase();
+    if (!cleanIdentifier) return;
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!trackingNumber.trim()) return;
     setIsSearching(true);
-    setTimeout(() => {
-      setActiveTracking(trackingNumber.trim().toUpperCase());
+    setOrder(null);
+    setError('');
+    try {
+      const response = await fetch('/api/tracking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: cleanIdentifier }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || 'Order not found.');
+      setOrder(data.order);
+      setIdentifier(cleanIdentifier);
+    } catch (lookupError) {
+      setError(lookupError instanceof Error ? lookupError.message : 'Unable to verify this order.');
+    } finally {
       setIsSearching(false);
-    }, 400);
+    }
   };
-
-  const sampleTrackings = [
-    { label: '🇺🇸 US Order (California)', code: 'FTC89421034US' },
-    { label: '🇬🇧 UK Order (London)', code: 'FTC77129032GB' },
-    { label: '🇪🇺 EU Order (Frankfurt)', code: 'FTC66289104DE' },
-    { label: '🇦🇺 AU Order (Sydney)', code: 'FTC55198201AU' },
-  ];
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in">
-      <div 
-        className="bg-[#121211] w-full max-w-2xl rounded-2xl shadow-2xl border border-stone-800 overflow-hidden flex flex-col text-stone-200"
-        onClick={(e) => e.stopPropagation()}
-      >
-        
-        {/* Header */}
+      <div className="bg-[#121211] w-full max-w-2xl rounded-2xl shadow-2xl border border-stone-800 overflow-hidden flex flex-col text-stone-200">
         <div className="px-6 py-4 border-b border-stone-800 bg-[#0c0c0b] text-white flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-[#181816] border border-stone-700 text-amber-400">
-              <Truck className="w-5 h-5" />
-            </div>
+            <div className="p-2 rounded-lg bg-[#181816] border border-stone-700 text-amber-400"><Package className="w-5 h-5" /></div>
             <div>
-              <h3 className="font-serif text-lg font-bold text-white flex items-center gap-2">
-                <span>Fetecart Order & Delivery Tracking</span>
-                <span className="text-[10px] font-sans font-semibold uppercase bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded">
-                  Live Status
-                </span>
-              </h3>
-              <p className="text-xs text-stone-400">
-                End-to-end tracked delivery with regional courier handoff
-              </p>
+              <h3 className="font-serif text-lg font-bold text-white">Fetecart Order Tracking</h3>
+              <p className="text-xs text-stone-400">Verified paid orders only</p>
             </div>
           </div>
-
-          <button
-            onClick={onClose}
-            className="text-stone-400 hover:text-white transition-colors p-1.5 rounded-full hover:bg-stone-800 cursor-pointer"
-          >
+          <button onClick={onClose} aria-label="Close tracking" className="text-stone-400 hover:text-white p-1.5 rounded-full hover:bg-stone-800 cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Content Body */}
-        <div className="p-6 space-y-6 overflow-y-auto max-h-[80vh]">
-          
-          {/* Tracking Search Input */}
+        <div className="p-6 space-y-5">
           <form onSubmit={handleSearch} className="space-y-2">
-            <label className="block text-xs font-semibold text-stone-300">
-              Enter Tracking Number or Order ID:
-            </label>
+            <label className="block text-xs font-semibold text-stone-300">Enter the order ID from your Stripe payment confirmation:</label>
             <div className="flex gap-2">
               <input
                 type="text"
-                value={trackingNumber}
-                onChange={(e) => setTrackingNumber(e.target.value)}
-                placeholder="e.g. FTC89421034US"
+                value={identifier}
+                onChange={(event) => setIdentifier(event.target.value)}
+                placeholder="FTC-1A2B3C4D"
+                autoComplete="off"
                 className="flex-1 px-4 py-2.5 text-xs sm:text-sm font-mono uppercase bg-[#181816] border border-stone-700 text-white rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500"
               />
-              <button
-                type="submit"
-                disabled={isSearching}
-                className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
-              >
+              <button type="submit" disabled={isSearching || !identifier.trim()} className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-stone-950 font-bold text-xs rounded-xl flex items-center gap-1.5 cursor-pointer">
                 <Search className="w-3.5 h-3.5" />
-                <span>Track</span>
+                <span>{isSearching ? 'Checking…' : 'Track'}</span>
               </button>
-            </div>
-
-            {/* Quick Sample Presets */}
-            <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[11px] text-stone-400">
-              <span>Try sample:</span>
-              {sampleTrackings.map((sample) => (
-                <button
-                  key={sample.code}
-                  type="button"
-                  onClick={() => {
-                    setTrackingNumber(sample.code);
-                    setActiveTracking(sample.code);
-                  }}
-                  className="px-2 py-0.5 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 font-mono text-[10px] cursor-pointer transition-colors"
-                >
-                  {sample.label}
-                </button>
-              ))}
             </div>
           </form>
 
-          {/* Tracking Status Card */}
-          <div className="p-4 bg-[#181816] rounded-xl border border-stone-800 space-y-3 shadow-md">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-800 pb-3">
-              <div>
-                <div className="text-[11px] text-stone-400 font-semibold uppercase">Tracking Number</div>
-                <div className="text-sm font-mono font-bold text-amber-400">{activeTracking}</div>
-              </div>
+          {error && <div role="alert" className="p-4 bg-red-950/30 border border-red-800/60 rounded-xl text-sm text-red-200">{error}</div>}
 
-              <div className="flex items-center gap-2">
+          {order && (
+            <div className="p-5 bg-[#181816] rounded-xl border border-emerald-800/60 space-y-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="text-[11px] text-stone-400 font-semibold uppercase">Order ID</div>
+                  <div className="text-sm font-mono font-bold text-amber-400">{order.orderId}</div>
+                </div>
                 <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/60 flex items-center gap-1">
-                  <Plane className="w-3.5 h-3.5" />
-                  <span>{trackingData.status}</span>
+                  <CheckCircle2 className="w-3.5 h-3.5" /> {order.status}
                 </span>
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div>
-                <span className="text-stone-400 text-[10px] uppercase font-semibold">Origin Hub</span>
-                <div className="font-medium text-stone-200 mt-0.5 flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-amber-500" />
-                  <span>{trackingData.origin}</span>
-                </div>
-              </div>
-              <div>
-                <span className="text-stone-400 text-[10px] uppercase font-semibold">Destination Regional Terminal</span>
-                <div className="font-medium text-stone-200 mt-0.5 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>{trackingData.destination}</span>
-                </div>
+              <div className="border-t border-stone-800 pt-4 text-sm text-stone-300 space-y-1">
+                <p>{order.message}</p>
+                <p className="text-xs text-stone-500">Payment confirmed: {order.confirmedAt}</p>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Timeline Milestones */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider">
-              Logistics Milestones
-            </h4>
-
-            <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-stone-800">
-              {trackingData.steps.map((step, idx) => (
-                <div key={idx} className="relative space-y-1">
-                  {/* Circle Marker */}
-                  <div 
-                    className={`absolute -left-6 top-1 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                      step.completed
-                        ? 'bg-emerald-600 border-emerald-500 text-white'
-                        : step.current
-                        ? 'bg-amber-500 border-amber-400 text-stone-950 ring-4 ring-amber-500/20'
-                        : 'bg-[#181816] border-stone-700'
-                    }`}
-                  >
-                    {step.completed && <CheckCircle2 className="w-3 h-3" />}
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs">
-                    <span className={`font-semibold ${step.current ? 'text-amber-400' : 'text-stone-200'}`}>
-                      {step.title}
-                    </span>
-                    <span className="text-[11px] text-stone-500">{step.timestamp}</span>
-                  </div>
-
-                  <p className="text-xs text-stone-400">{step.description}</p>
-                  <div className="text-[10px] font-medium text-stone-500 flex items-center gap-1">
-                    <MapPin className="w-3 h-3" />
-                    <span>{step.location}</span>
-                  </div>
-                </div>
-              ))}
+          {!order && !error && (
+            <div className="p-4 bg-[#181816] rounded-xl border border-stone-800 text-sm text-stone-400">
+              Tracking results appear only after the order ID is matched to a completed Stripe payment.
             </div>
-          </div>
+          )}
 
-          {/* Guarantee Footer */}
-          <div className="p-3 bg-[#141413] rounded-xl border border-stone-800 text-xs text-stone-300 flex items-center justify-between">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>DDP Air Express: All import duties and local postal delivery prepaid</span>
-            </span>
-            <span className="text-[11px] text-stone-400 flex items-center gap-1">
-              <Headphones className="w-3.5 h-3.5 text-stone-500" />
-              <span>Concierge Support Active</span>
-            </span>
+          <div className="p-3 bg-[#141413] rounded-xl border border-stone-800 text-xs text-stone-300 flex items-center justify-between gap-3">
+            <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-emerald-400" /> Secure server verification</span>
+            <span className="text-stone-400 flex items-center gap-1"><Headphones className="w-3.5 h-3.5" /> Concierge support</span>
           </div>
-
         </div>
-
       </div>
     </div>
   );
