@@ -1,8 +1,8 @@
-import { CloudflareEnv, ensureSchema, json, requireAdmin } from '../../../server/cloudflareStore';
+import { CloudflareEnv, ensureSchema, isAdminRequest, json } from '../../../server/cloudflareStore';
 
 type Context = { request: Request; env: CloudflareEnv };
 export async function onRequestPatch({ request, env }: Context) {
-  const denied = await requireAdmin(request, env); if (denied) return denied;
+  if (!(await isAdminRequest(request, env))) return json({ success: false, error: 'Admin sign-in required.' }, 401);
   if (!env.DB) return json({ success: false, error: 'Database is not configured.' }, 503);
   const body = await request.json() as { id?: string; status?: string };
   if (!body.id || !['new', 'open', 'replied', 'closed'].includes(body.status || '')) return json({ success: false, error: 'Invalid update.' }, 400);

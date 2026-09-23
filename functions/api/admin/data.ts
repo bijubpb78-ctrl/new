@@ -1,9 +1,9 @@
-import { CloudflareEnv, ensureSchema, json, requireAdmin } from '../../../server/cloudflareStore';
+import { CloudflareEnv, ensureSchema, isAdminRequest, json } from '../../../server/cloudflareStore';
 
 type Context = { request: Request; env: CloudflareEnv };
 
 export async function onRequestGet({ request, env }: Context) {
-  const denied = await requireAdmin(request, env); if (denied) return denied;
+  if (!(await isAdminRequest(request, env))) return json({ success: false, error: 'Admin sign-in required.' }, 401);
   if (!env.DB) return json({ success: false, error: 'Database is not configured.' }, 503);
   await ensureSchema(env.DB);
   const [inquiries, products, shipments] = await Promise.all([

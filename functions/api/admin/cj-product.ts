@@ -1,8 +1,8 @@
-import { CloudflareEnv, json, requireAdmin } from '../../../server/cloudflareStore';
+import { CloudflareEnv, isAdminRequest, json } from '../../../server/cloudflareStore';
 
 type Context = { request: Request; env: CloudflareEnv };
 export async function onRequestGet({ request, env }: Context) {
-  const denied = await requireAdmin(request, env); if (denied) return denied;
+  if (!(await isAdminRequest(request, env))) return json({ success: false, error: 'Admin sign-in required.' }, 401);
   if (!env.CJ_API_KEY) return json({ success: false, error: 'CJ API key is not configured.' }, 503);
   const sku = (new URL(request.url).searchParams.get('sku') || '').trim();
   if (!sku) return json({ success: false, error: 'SKU is required.' }, 400);

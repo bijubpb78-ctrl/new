@@ -1,8 +1,8 @@
-import { CloudflareEnv, ensureSchema, json, requireAdmin } from '../../../server/cloudflareStore';
+import { CloudflareEnv, ensureSchema, isAdminRequest, json } from '../../../server/cloudflareStore';
 
 type Context = { request: Request; env: CloudflareEnv };
 export async function onRequestPut({ request, env }: Context) {
-  const denied = await requireAdmin(request, env); if (denied) return denied;
+  if (!(await isAdminRequest(request, env))) return json({ success: false, error: 'Admin sign-in required.' }, 401);
   if (!env.DB) return json({ success: false, error: 'Database is not configured.' }, 503);
   const product = await request.json() as Record<string, unknown>;
   const id = String(product.id || '').trim();
@@ -14,7 +14,7 @@ export async function onRequestPut({ request, env }: Context) {
   return json({ success: true, product });
 }
 export async function onRequestDelete({ request, env }: Context) {
-  const denied = await requireAdmin(request, env); if (denied) return denied;
+  if (!(await isAdminRequest(request, env))) return json({ success: false, error: 'Admin sign-in required.' }, 401);
   if (!env.DB) return json({ success: false, error: 'Database is not configured.' }, 503);
   const id = new URL(request.url).searchParams.get('id') || '';
   if (!id) return json({ success: false, error: 'Product ID is required.' }, 400);
