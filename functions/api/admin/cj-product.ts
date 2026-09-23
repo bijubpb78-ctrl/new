@@ -4,8 +4,10 @@ type Context = { request: Request; env: CloudflareEnv };
 export async function onRequestGet({ request, env }: Context) {
   if (!(await isAdminRequest(request, env))) return json({ success: false, error: 'Admin sign-in required.' }, 401);
   if (!env.CJ_API_KEY) return json({ success: false, error: 'CJ API key is not configured.' }, 503);
-  const sku = (new URL(request.url).searchParams.get('sku') || '').trim();
-  if (!sku) return json({ success: false, error: 'SKU is required.' }, 400);
+  const input = (new URL(request.url).searchParams.get('sku') || '').trim();
+  if (!input) return json({ success: false, error: 'CJ SKU, product ID or product link is required.' }, 400);
+  const productId = input.match(/(?:-p-)?(\d{16,})(?:\.html)?(?:[?#]|$)/)?.[1];
+  const sku = input;
   try {
     const tokenResponse = await fetch('https://developers.cjdropshipping.com/api2.0/v1/authentication/getAccessToken', {
       method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ apiKey: env.CJ_API_KEY }),
@@ -19,8 +21,16 @@ export async function onRequestGet({ request, env }: Context) {
       });
       return response.json() as Promise<any>;
     };
-    let data = await lookup('productSku');
-    if (!data?.data) data = await lookup('variantSku');
+    let data: any = null;
+    if (productId) {
+      const response = await fetch(`https://developers.cjdropshipping.com/api2.0/v1/product/query?pid=${encodeURIComponent(productId)}`, {
+        headers: { 'CJ-Access-Token': token },
+      });
+      data = await response.json() as any;
+    } else {
+      data = await lookup('productSku');
+      if (!data?.data) data = await lookup('variantSku');
+    }
     if (!data?.data) {
       const searchResponse = await fetch(`https://developers.cjdropshipping.com/api2.0/v1/product/listV2?page=1&size=10&keyWord=${encodeURIComponent(sku)}`, {
         headers: { 'CJ-Access-Token': token },
@@ -48,7 +58,8 @@ export async function onRequestGet({ request, env }: Context) {
       ...variants.map((item: any) => item.variantImage),
     ].filter(Boolean))];
     const firstVariant = variants[0] || {};
-    const inventoryResponse = await fetch(`https://developers.cjdropshipping.com/api2.0/v1/product/stock/queryBySku?sku=${encodeURIComponent(sku)}`, {
+    const inventorySku = product.productSku || sku;
+    const inventoryResponse = await fetch(`https://developers.cjdropshipping.com/api2.0/v1/product/stock/queryBySku?sku=${encodeURIComponent(inventorySku)}`, {
       headers: { 'CJ-Access-Token': token },
     });
     const inventoryData = await inventoryResponse.json() as any;
