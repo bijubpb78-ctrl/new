@@ -62,9 +62,11 @@ export const AdminOperationsPage: React.FC = () => {
     setError(''); const response = await fetch(`/api/admin/cj-product?sku=${encodeURIComponent(sourceSku)}`); const data = await response.json();
     if (!response.ok) { setError(data.error || 'CJ lookup failed.'); return; }
     const item = data.product || {};
-    setEditing({ ...emptyProduct(), id: `cj-${item.pid || Date.now()}`, sku: item.productSku || item.sku || sourceSku,
-      name: item.productNameEn || item.productName || '', subtitle: item.productNameEn || '', description: item.productDescription || '',
-      basePriceUSD: Number(item.sellPrice || item.productSellPrice || 0), images: [item.productImage || item.bigImage].filter(Boolean) });
+    setEditing({ ...emptyProduct(), id: `cj-${item.id || Date.now()}`, sku: item.sku || sourceSku,
+      name: item.name || '', subtitle: item.categoryName || item.name || '', description: item.description || '',
+      basePriceUSD: Number(item.suggestedPriceUSD || 0), compareAtPriceUSD: item.suggestedPriceUSD ? Number((item.suggestedPriceUSD * 1.25).toFixed(2)) : undefined,
+      weightKg: Number(item.weightKg || 0), dimensions: item.dimensions || '', material: item.material || '',
+      images: Array.isArray(item.images) ? item.images : [] });
   };
   const connectCj = async () => {
     setError(''); setCjMessage('Connecting…');
