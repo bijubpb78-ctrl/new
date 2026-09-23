@@ -13,12 +13,15 @@ async function verifySignature(raw: string, supplied: string, openId: string) {
 }
 
 export async function onRequestPost({ request, env }: Context) {
-  if (!env.DB || !env.CJ_OPEN_ID) return json({ success: false, error: 'CJ webhook is not configured.' }, 503);
+  if (!env.DB) return json({ success: false, error: 'CJ webhook is not configured.' }, 503);
+  await ensureSchema(env.DB);
+  const stored = await env.DB.prepare("SELECT value FROM app_settings WHERE key = 'cj_open_id'").first<{ value?: string }>();
+  const openId = env.CJ_OPEN_ID || stored?.value;
+  if (!openId) return json({ success: false, error: 'CJ webhook is not configured.' }, 503);
   const raw = await request.text();
   const signature = request.headers.get('sign') || '';
-  if (!signature || !(await verifySignature(raw, signature, env.CJ_OPEN_ID))) return json({ success: false, error: 'Invalid CJ signature.' }, 401);
+  if (!signature || !(await verifySignature(raw, signature, openId))) return json({ success: false, error: 'Invalid CJ signature.' }, 401);
   let body: any; try { body = JSON.parse(raw); } catch { return json({ success: false, error: 'Invalid JSON.' }, 400); }
-  await ensureSchema(env.DB);
   const params = body.params || {};
   const orderIds = Array.isArray(params.storeOrderNumbers) ? params.storeOrderNumbers : [params.orderNumber || params.orderNum];
   const orderId = String(orderIds.find((value: unknown) => /^FTC-[A-F0-9]{8}$/i.test(String(value || ''))) || '').toUpperCase();

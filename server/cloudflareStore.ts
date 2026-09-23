@@ -40,6 +40,9 @@ export async function ensureSchema(db: D1Database) {
       id TEXT PRIMARY KEY, topic TEXT NOT NULL, order_id TEXT, payload TEXT NOT NULL,
       received_at TEXT NOT NULL
     )`),
+    db.prepare(`CREATE TABLE IF NOT EXISTS app_settings (
+      key TEXT PRIMARY KEY, value TEXT NOT NULL, updated_at TEXT NOT NULL
+    )`),
   ]);
 }
 
