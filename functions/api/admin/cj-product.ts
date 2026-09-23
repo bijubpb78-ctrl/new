@@ -52,11 +52,21 @@ export async function onRequestGet({ request, env }: Context) {
     const prices = variants.map((item: any) => Number(item.variantSugSellPrice || item.variantSellPrice)).filter((value: number) => Number.isFinite(value) && value > 0);
     const cjCost = prices.length ? Math.max(...prices) : Number(String(product.sellPrice || product.nowPrice || '0').split('-').pop());
     const suggestedPrice = Number((cjCost * 1.8).toFixed(2));
+    let productImages: string[] = [];
+    if (Array.isArray(product.productImageSet)) productImages = product.productImageSet;
+    else if (typeof product.productImageSet === 'string') {
+      try {
+        const parsed = JSON.parse(product.productImageSet);
+        productImages = Array.isArray(parsed) ? parsed : [product.productImageSet];
+      } catch {
+        productImages = product.productImageSet.split(',').map((value: string) => value.trim());
+      }
+    }
     const images = [...new Set([
       product.bigImage, product.productImage,
-      ...(Array.isArray(product.productImageSet) ? product.productImageSet : []),
+      ...productImages,
       ...variants.map((item: any) => item.variantImage),
-    ].filter(Boolean))];
+    ].filter((value): value is string => typeof value === 'string' && /^https?:\/\//.test(value)))];
     const firstVariant = variants[0] || {};
     const inventorySku = product.productSku || sku;
     const inventoryResponse = await fetch(`https://developers.cjdropshipping.com/api2.0/v1/product/stock/queryBySku?sku=${encodeURIComponent(inventorySku)}`, {
