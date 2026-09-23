@@ -21,6 +21,21 @@ export async function onRequestGet({ request, env }: Context) {
     };
     let data = await lookup('productSku');
     if (!data?.data) data = await lookup('variantSku');
+    if (!data?.data) {
+      const searchResponse = await fetch(`https://developers.cjdropshipping.com/api2.0/v1/product/listV2?page=1&size=10&keyWord=${encodeURIComponent(sku)}`, {
+        headers: { 'CJ-Access-Token': token },
+      });
+      const searchData = await searchResponse.json() as any;
+      const matches = searchData?.data?.content || searchData?.data?.list || [];
+      const match = matches.find((item: any) => item.productSku === sku || item.sku === sku) || matches[0];
+      const pid = match?.pid || match?.id;
+      if (pid) {
+        const detailResponse = await fetch(`https://developers.cjdropshipping.com/api2.0/v1/product/query?pid=${encodeURIComponent(pid)}`, {
+          headers: { 'CJ-Access-Token': token },
+        });
+        data = await detailResponse.json() as any;
+      }
+    }
     const product = data?.data || null;
     if (!product) return json({ success: false, error: 'No CJ product was found for that SKU.' }, 404);
     const variants = Array.isArray(product.variants) ? product.variants : [];
