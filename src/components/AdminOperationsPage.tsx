@@ -26,6 +26,7 @@ export const AdminOperationsPage: React.FC = () => {
   const [editing, setEditing] = useState<Product>(emptyProduct());
   const [sourceSku, setSourceSku] = useState('');
   const [cjMessage, setCjMessage] = useState('');
+  const [savedDialog, setSavedDialog] = useState(false);
   const [cjResults, setCjResults] = useState<CjSearchResult[]>([]);
   const [shipment, setShipment] = useState({ orderId: '', cjOrderId: '', trackingNumber: '', carrier: '', trackingUrl: '', status: 'Processing' });
 
@@ -55,7 +56,8 @@ export const AdminOperationsPage: React.FC = () => {
   const saveProduct = async () => {
     const normalized = { ...editing, slug: editing.slug || editing.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') };
     const response = await fetch('/api/admin/products', { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(normalized) });
-    const data = await response.json(); if (!response.ok) { setError(data.error); return; } await load(); setEditing(normalized);
+    const data = await response.json(); if (!response.ok) { setError(data.error); return; }
+    await load(); setEditing(emptyProduct()); setSourceSku(''); setCjResults([]); setSavedDialog(true);
   };
   const deleteProduct = async (id: string) => {
     await fetch(`/api/admin/products?id=${encodeURIComponent(id)}`, { method: 'DELETE' }); await load(); setEditing(emptyProduct());
@@ -97,6 +99,7 @@ export const AdminOperationsPage: React.FC = () => {
   if (!authenticated) return <div className="min-h-screen bg-[#0b0b0a] text-white grid place-items-center p-5"><form onSubmit={signIn} className="w-full max-w-sm bg-[#151513] border border-stone-800 rounded-2xl p-6 space-y-4"><h1 className="font-serif text-2xl">Fetecart Operations</h1><p className="text-sm text-stone-400">Private store management</p><input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Admin password" className="w-full bg-stone-900 border border-stone-700 rounded-xl px-4 py-3"/><button className="w-full bg-amber-500 text-black font-bold rounded-xl py-3">Sign in</button>{error && <p className="text-red-400 text-sm">{error}</p>}<a href="/" className="block text-center text-sm text-stone-400">Return to store</a></form></div>;
 
   return <div className="min-h-screen bg-[#0b0b0a] text-stone-200">
+    {savedDialog && <div className="fixed inset-0 z-50 bg-black/70 grid place-items-center p-5" role="dialog" aria-modal="true" aria-labelledby="product-saved-title"><div className="w-full max-w-sm bg-[#181816] border border-emerald-700 rounded-2xl p-6 text-center shadow-2xl"><div className="mx-auto mb-3 w-12 h-12 rounded-full bg-emerald-500 text-black grid place-items-center text-2xl font-bold">✓</div><h2 id="product-saved-title" className="text-xl font-bold text-white">Product saved successfully</h2><p className="text-sm text-stone-400 mt-2">The product is now available in the Fetecart catalog.</p><button autoFocus onClick={()=>setSavedDialog(false)} className="mt-5 w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl">OK</button></div></div>}
     <header className="sticky top-0 z-10 bg-[#11110f] border-b border-stone-800 px-5 py-4 flex justify-between"><div><h1 className="font-serif text-xl text-white">Fetecart Operations</h1><p className="text-xs text-stone-500">Enquiries, products and shipping</p></div><div className="flex gap-2"><button onClick={load} className="p-2"><RefreshCw className="w-4"/></button><button onClick={async()=>{await fetch('/api/admin/logout',{method:'POST'});location.reload();}} className="p-2"><LogOut className="w-4"/></button></div></header>
     <main className="max-w-6xl mx-auto p-5 space-y-5">
       <div className="flex gap-2 flex-wrap">{([['enquiries',MessageSquare],['products',PackageSearch],['tracking',Truck]] as const).map(([id,Icon])=><button key={id} onClick={()=>setTab(id)} className={`px-4 py-2 rounded-xl flex gap-2 capitalize ${tab===id?'bg-amber-500 text-black':'bg-stone-900'}`}><Icon className="w-4"/>{id}</button>)}</div>
