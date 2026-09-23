@@ -13,10 +13,14 @@ export async function onRequestGet({ request, env }: Context) {
     const tokenData = await tokenResponse.json() as any;
     const token = tokenData?.data?.accessToken;
     if (!token) return json({ success: false, error: 'CJ authentication failed. Rotate and update the CJ API key.' }, 502);
-    const response = await fetch(`https://developers.cjdropshipping.com/api2.0/v1/product/query?productSku=${encodeURIComponent(sku)}`, {
-      headers: { 'CJ-Access-Token': token },
-    });
-    const data = await response.json() as any;
+    const lookup = async (field: 'productSku' | 'variantSku') => {
+      const response = await fetch(`https://developers.cjdropshipping.com/api2.0/v1/product/query?${field}=${encodeURIComponent(sku)}`, {
+        headers: { 'CJ-Access-Token': token },
+      });
+      return response.json() as Promise<any>;
+    };
+    let data = await lookup('productSku');
+    if (!data?.data) data = await lookup('variantSku');
     const product = data?.data || null;
     if (!product) return json({ success: false, error: 'No CJ product was found for that SKU.' }, 404);
     const variants = Array.isArray(product.variants) ? product.variants : [];
